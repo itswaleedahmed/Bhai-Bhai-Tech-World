@@ -224,3 +224,90 @@ export interface Review {
   verifiedBuyer: boolean;
   upvotes: number;
 }
+
+export interface WhatsAppInquiry {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerCity: string;
+  city?: string;
+  type: 'pc_builder_quote' | 'direct_product' | 'general_question' | 'upgrade_consultation' | string;
+  summary: string;
+  details?: string;
+  totalAmountPKR?: number;
+  quotedTotalPKR?: number;
+  status: 'new' | 'contacted' | 'quoted' | 'confirmed' | 'closed' | 'converted' | 'cancelled';
+  date: string;
+  itemsList?: string[];
+  notes?: string;
+}
+
+export interface VideoInspectionRequest {
+  id: string;
+  productId: string;
+  productName: string;
+  productImage?: string;
+  productPricePKR?: number;
+  customerName?: string;
+  customerPhone: string;
+  customerCity: string;
+  requestDate: string;
+  status: 'pending' | 'recorded' | 'video_recorded' | 'sent_via_whatsapp' | 'sent_to_customer' | 'approved' | 'approved_by_customer' | 'dispatched';
+  serialNumber?: string;
+  assignedStaff?: string;
+  videoNotes?: string;
+  notes?: string;
+  videoUrl?: string;
+  durationSec?: number;
+}
+
+export interface TradeInSubmission {
+  id: string;
+  oldComponentName: string;
+  category: 'GPU' | 'CPU' | 'Console' | 'Motherboard' | string;
+  condition: 'mint' | 'good' | 'fair' | string;
+  estimatedValuePKR: number;
+  offeredValuePKR?: number;
+  targetProductName?: string;
+  targetPricePKR?: number;
+  customerName: string;
+  customerPhone: string;
+  customerCity: string;
+  submissionDate: string;
+  status: 'pending_review' | 'counter_offered' | 'physical_inspection' | 'approved' | 'credit_approved' | 'completed' | 'deal_completed' | 'rejected' | 'declined';
+  adminNotes?: string;
+}
+
+export interface StoreConfig {
+  storeName: string;
+  hotlinePhone: string;
+  hotlineDisplay: string;
+  primaryWhatsApp?: string;
+  secondaryWhatsApp?: string;
+  email: string;
+  shopAddress: string;
+  shopHours: string;
+  timingsWeekdays?: string;
+  timingsSunday?: string;
+  directionsLandmark?: string;
+  announcementBannerText: string;
+  announcementBannerActive: boolean;
+  freeDeliveryThresholdPKR: number;
+  standardDeliveryFeePKR: number;
+  assemblyFeePKR: number;
+  isStoreOpen: boolean;
+  tradeInMarginPercentage: number;
+  adminPin?: string;
+}
+
+export interface UserProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  phoneNumber?: string;
+  shippingCity?: string;
+  shippingAddress?: string;
+  role: 'customer' | 'admin';
+  createdAt: string;
+}

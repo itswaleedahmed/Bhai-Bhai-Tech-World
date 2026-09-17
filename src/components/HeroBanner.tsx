@@ -54,7 +54,7 @@ export const HeroBanner: React.FC = () => {
       secondaryBtnText: 'Build From Scratch',
       secondaryBtnAction: () => setCurrentPage('pc-builder'),
       image:
-        'https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
       specsTag: '100% Stress-Tested • Ready to Game',
     },
   ];

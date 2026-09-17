@@ -10,7 +10,6 @@ import {
   Package,
   RefreshCw,
 } from 'lucide-react';
-import { PRODUCTS } from '../data/products';
 import { CATEGORIES } from '../data/categories';
 import { ProductCard } from '../components/ProductCard';
 import { ProductSkeletonGrid } from '../components/ProductSkeletonCard';
@@ -18,7 +17,7 @@ import { useApp } from '../context/AppContext';
 import { formatPKR } from '../utils/currency';
 
 export const ShopCatalogView: React.FC = () => {
-  const { selectedCategorySlug, setSelectedCategorySlug, searchQuery, setSearchQuery } = useApp();
+  const { products, selectedCategorySlug, setSelectedCategorySlug, searchQuery, setSearchQuery } = useApp();
 
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
@@ -53,13 +52,13 @@ export const ShopCatalogView: React.FC = () => {
 
   // Extract unique brands
   const brands = useMemo(() => {
-    const list = Array.from(new Set(PRODUCTS.map((p) => p.brand))).sort();
+    const list = Array.from(new Set(products.map((p) => p.brand))).sort();
     return ['all', ...list];
-  }, []);
+  }, [products]);
 
   // Filtered and sorted products
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       // Category filter
       if (selectedCategorySlug && product.categoryId !== selectedCategorySlug) {
         return false;
@@ -71,7 +70,7 @@ export const ShopCatalogView: React.FC = () => {
         const matchesName = product.name.toLowerCase().includes(query);
         const matchesBrand = product.brand.toLowerCase().includes(query);
         const matchesCategory = product.categoryName.toLowerCase().includes(query);
-        const matchesSpecs = Object.values(product.specs).some((val) => val.toLowerCase().includes(query));
+        const matchesSpecs = Object.values(product.specs).some((val) => String(val).toLowerCase().includes(query));
         if (!matchesName && !matchesBrand && !matchesCategory && !matchesSpecs) return false;
       }
 
@@ -211,7 +210,7 @@ export const ShopCatalogView: React.FC = () => {
                 }`}
               >
                 <span>All Departments</span>
-                <span className="text-[10px] font-mono">{PRODUCTS.length}</span>
+                <span className="text-[10px] font-mono">{products.length}</span>
               </button>
 
               {CATEGORIES.map((cat) => (

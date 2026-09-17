@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, ShieldCheck, Truck, Clock, MessageSquare, ArrowRight } from 'lucide-react';
+import { Phone, Mail, MapPin, ShieldCheck, Truck, Clock, MessageSquare, ArrowRight, Lock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl } from '../utils/whatsapp';
 import { BrandLogo } from './BrandLogo';
@@ -234,7 +234,18 @@ export const Footer: React.FC = () => {
 
         {/* Bottom copyright */}
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500 text-[11px]">
-          <p>© {new Date().getFullYear()} Bhai Bhai Tech World. All rights reserved.</p>
+          <div className="flex items-center gap-2">
+            <p>© {new Date().getFullYear()} Bhai Bhai Tech World. All rights reserved.</p>
+            {/* Discreet Staff Portal Entrance */}
+            <button
+              onClick={() => setCurrentPage('admin')}
+              className="opacity-15 hover:opacity-80 transition-opacity p-0.5 text-zinc-600 hover:text-[#25D366] cursor-pointer"
+              title="Staff Desk"
+              aria-label="Staff Desk"
+            >
+              <Lock className="w-2.5 h-2.5" />
+            </button>
+          </div>
           <p className="flex items-center gap-2">
             <span>Official Boxed Hardware</span>
             <span>•</span>

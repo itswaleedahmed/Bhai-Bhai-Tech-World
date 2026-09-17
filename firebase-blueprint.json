@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile and account information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "phoneNumber": { "type": "string", "maxLength": 30 },
+        "shippingCity": { "type": "string", "maxLength": 50 },
+        "shippingAddress": { "type": "string", "maxLength": 250 },
+        "role": { "type": "string", "enum": ["customer", "admin"], "maxLength": 20 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "email", "createdAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Authorized staff and owner credentials",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email", "maxLength": 128 },
+        "role": { "type": "string", "maxLength": 50 },
+        "assignedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["email", "role"]
+    },
+    "CustomerOrder": {
+      "title": "CustomerOrder",
+      "description": "Order records and quotations placed by users",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "customerEmail": { "type": "string", "maxLength": 128 },
+        "shippingAddress": { "type": "string", "maxLength": 250 },
+        "city": { "type": "string", "maxLength": 50 },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "totalPKR": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "dispatched", "delivered", "cancelled"], "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["orderId", "userId", "customerName", "customerPhone", "totalPKR", "status"]
+    },
+    "StoreConfig": {
+      "title": "StoreConfig",
+      "description": "Sheikhupura shop configuration and store parameters",
+      "type": "object",
+      "properties": {
+        "primaryWhatsApp": { "type": "string", "maxLength": 30 },
+        "secondaryPhone": { "type": "string", "maxLength": 30 },
+        "shopAddress": { "type": "string", "maxLength": 200 },
+        "shopHours": { "type": "string", "maxLength": 100 },
+        "timingsWeekdays": { "type": "string", "maxLength": 100 },
+        "timingsSunday": { "type": "string", "maxLength": 100 },
+        "announcementBanner": { "type": "string", "maxLength": 300 },
+        "announcementActive": { "type": "boolean" },
+        "assemblyFeePKR": { "type": "number" },
+        "isStoreOpen": { "type": "boolean" },
+        "tradeInMarginPercentage": { "type": "number" },
+        "adminPin": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      }
+    },
+    "ProductItem": {
+      "title": "ProductItem",
+      "description": "Store inventory product record with real-time price and stock levels",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "brand": { "type": "string", "maxLength": 80 },
+        "categoryId": { "type": "string", "maxLength": 80 },
+        "categoryName": { "type": "string", "maxLength": 80 },
+        "pricePKR": { "type": "number" },
+        "originalPricePKR": { "type": "number" },
+        "inStock": { "type": "boolean" },
+        "stockCount": { "type": "number" },
+        "rating": { "type": "number" },
+        "reviewsCount": { "type": "number" },
+        "tier": { "type": "string", "maxLength": 30 },
+        "warrantyMonths": { "type": "number" },
+        "shortDesc": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "image": { "type": "string", "maxLength": 1000 },
+        "isDeal": { "type": "boolean" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "name", "pricePKR", "inStock"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "ProductItem",
+      "description": "Store live inventory with real-time pricing and stock counts"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Registered user profiles and account metadata"
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminRecord",
+      "description": "Owner and staff administrative clearance collection"
+    },
+    "/orders/{orderId}": {
+      "schema": "CustomerOrder",
+      "description": "Customer purchase orders and build quotations"
+    },
+    "/storeConfig/{configId}": {
+      "schema": "StoreConfig",
+      "description": "Store operational settings, hotlines and timings"
+    }
+  }
+}

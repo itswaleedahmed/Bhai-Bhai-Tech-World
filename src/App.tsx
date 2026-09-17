@@ -31,10 +31,97 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { Footer } from './components/Footer';
 import { TradeInEstimatorModal } from './components/TradeInEstimatorModal';
 import { VideoInspectionModal } from './components/VideoInspectionModal';
+import { AdminDashboardView } from './components/AdminDashboardView';
+import { AuthModal } from './components/AuthModal';
+
+const AdminRouteGuard: React.FC = () => {
+  const { user, isAuthLoading, setCurrentPage, showToast } = useApp();
+
+  React.useEffect(() => {
+    if (!isAuthLoading) {
+      const isOwner = user?.email?.toLowerCase() === 'itswaleedahmed@gmail.com';
+      if (!isOwner) {
+        if (window.location.hash.toLowerCase() === '#admin') {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        setCurrentPage('home');
+        showToast('Admin entrance restricted to verified owner (itswaleedahmed@gmail.com)');
+      }
+    }
+  }, [user, isAuthLoading, setCurrentPage, showToast]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+        <span className="text-xs text-zinc-400 font-mono">Verifying store owner credentials...</span>
+      </div>
+    );
+  }
+
+  const isOwner = user?.email?.toLowerCase() === 'itswaleedahmed@gmail.com';
+  if (!isOwner) {
+    return null;
+  }
+
+  return <AdminDashboardView />;
+};
 
 const AppContent: React.FC = () => {
-  const { currentPage, activeProductModal, closeProductModal, toast } = useApp();
+  const {
+    currentPage,
+    setCurrentPage,
+    activeProductModal,
+    closeProductModal,
+    toast,
+    user,
+    isAuthLoading,
+    showToast,
+  } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Guard admin entrance: check if the logged-in user email is 'itswaleedahmed@gmail.com'. If not, redirect users trying to access the #admin URL back to the home page.
+  React.useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash.toLowerCase() === '#admin') {
+        if (isAuthLoading) return; // Wait for initial Firebase auth check
+        const isOwner = user?.email?.toLowerCase() === 'itswaleedahmed@gmail.com';
+        if (isOwner) {
+          setCurrentPage('admin');
+        } else {
+          // Immediately clean URL hash and redirect back to home
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+          setCurrentPage('home');
+          showToast('Admin entrance restricted to verified owner (itswaleedahmed@gmail.com)');
+        }
+      }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Secret key combination: Ctrl+Shift+A or Alt+A toggles staff admin desk ONLY for verified owner
+      if (
+        (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) ||
+        (e.altKey && (e.key === 'A' || e.key === 'a'))
+      ) {
+        e.preventDefault();
+        const isOwner = user?.email?.toLowerCase() === 'itswaleedahmed@gmail.com';
+        if (isOwner) {
+          setCurrentPage((prev) => (prev === 'admin' ? 'home' : 'admin'));
+        } else {
+          showToast('Admin desk requires verified store owner login.');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHash);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [user, isAuthLoading, setCurrentPage, showToast]);
 
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-zinc-100 flex flex-col font-sans selection:bg-[#25D366] selection:text-black">
@@ -67,6 +154,7 @@ const AppContent: React.FC = () => {
         {currentPage === 'fps-estimator' && <FPSEstimatorView />}
         {currentPage === 'community-builds' && <CommunityBuildsView />}
         {currentPage === 'services' && <ServicesView />}
+        {currentPage === 'admin' && <AdminRouteGuard />}
 
         {[
           'about',
@@ -97,7 +185,7 @@ const AppContent: React.FC = () => {
         )}
 
         {/* Fallback for other routes */}
-        {!['home', 'shop', 'pc-builder', 'fps-estimator', 'community-builds', 'services', 'about', 'faq', 'warranty-policy', 'return-policy', 'terms', 'privacy-policy', 'complaints', 'my-account', 'store-locator'].includes(currentPage) && (
+        {!['home', 'shop', 'pc-builder', 'fps-estimator', 'community-builds', 'services', 'admin', 'about', 'faq', 'warranty-policy', 'return-policy', 'terms', 'privacy-policy', 'complaints', 'my-account', 'store-locator'].includes(currentPage) && (
           <ShopCatalogView />
         )}
       </main>
@@ -116,6 +204,7 @@ const AppContent: React.FC = () => {
       <CompareModal />
       <TradeInEstimatorModal />
       <VideoInspectionModal />
+      <AuthModal />
 
       {/* Floating Toast Notification */}
       {toast && (

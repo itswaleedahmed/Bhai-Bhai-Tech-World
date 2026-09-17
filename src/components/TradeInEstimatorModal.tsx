@@ -13,7 +13,6 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { PRODUCTS } from '../data/products';
 import { formatPKR } from '../utils/currency';
 import { Product } from '../types';
 
@@ -58,7 +57,7 @@ const CONDITION_MODIFIERS = [
 ];
 
 export const TradeInEstimatorModal: React.FC = () => {
-  const { isTradeInOpen, closeTradeIn, tradeInTargetProduct } = useApp();
+  const { isTradeInOpen, closeTradeIn, tradeInTargetProduct, products, addTradeInSubmission } = useApp();
 
   const [categoryFilter, setCategoryFilter] = useState<'ALL' | 'GPU' | 'CPU' | 'Console'>('ALL');
   const [selectedOldId, setSelectedOldId] = useState<string>('gtx-1660s');
@@ -84,8 +83,8 @@ export const TradeInEstimatorModal: React.FC = () => {
   // Target product for upgrade
   const targetProduct: Product =
     tradeInTargetProduct ||
-    PRODUCTS.find((p) => p.id === customTargetId) ||
-    PRODUCTS[0];
+    products.find((p) => p.id === customTargetId) ||
+    products[0];
 
   const netCashDifference = Math.max(0, targetProduct.pricePKR - calculatedTradeInCredit);
   const discountPercent = Math.round((calculatedTradeInCredit / targetProduct.pricePKR) * 100);
@@ -268,7 +267,7 @@ export const TradeInEstimatorModal: React.FC = () => {
                   onChange={(e) => setCustomTargetId(e.target.value)}
                   className="w-full bg-[#18191E] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#25D366]"
                 >
-                  {PRODUCTS.filter((p) => p.pricePKR >= 40000).map((p) => (
+                  {products.filter((p) => p.pricePKR >= 40000).map((p) => (
                     <option key={p.id} value={p.id} className="bg-[#121316]">
                       {p.name.substring(0, 32)}... ({formatPKR(p.pricePKR)})
                     </option>
@@ -357,6 +356,21 @@ export const TradeInEstimatorModal: React.FC = () => {
               href={whatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                addTradeInSubmission({
+                  oldComponentName: selectedOld.name,
+                  category: selectedOld.category,
+                  condition: conditionObj.label,
+                  estimatedValuePKR: calculatedTradeInCredit,
+                  offeredValuePKR: calculatedTradeInCredit,
+                  targetProductName: targetProduct.name,
+                  targetPricePKR: targetProduct.pricePKR,
+                  customerName: 'WhatsApp Visitor',
+                  customerPhone: '+92 3XX XXXXXXX',
+                  customerCity: 'Pakistan (Online)',
+                  adminNotes: `Estimated diff payable: PKR ${netCashDifference}. Condition selected: ${conditionObj.label}`,
+                });
+              }}
               className="flex-1 sm:flex-initial py-3 px-6 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(37,211,102,0.4)]"
             >
               <Phone className="w-4 h-4 fill-black" />

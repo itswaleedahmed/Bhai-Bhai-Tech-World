@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PRODUCTS } from '../data/products';
 import { ProductCard } from './ProductCard';
 import { ProductSkeletonGrid } from './ProductSkeletonCard';
 import { useApp } from '../context/AppContext';
 
 export const BestSellingCards: React.FC = () => {
-  const { setCurrentPage, setSelectedCategorySlug } = useApp();
+  const { products, setCurrentPage, setSelectedCategorySlug } = useApp();
   const [activeTab, setActiveTab] = useState<'all' | 'graphics-cards' | 'processors' | 'monitors'>('graphics-cards');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -27,7 +26,7 @@ export const BestSellingCards: React.FC = () => {
     }, 280);
   };
 
-  const filteredProducts = PRODUCTS.filter((p) => {
+  const filteredProducts = products.filter((p) => {
     if (activeTab === 'all') return p.isDeal || p.isNew;
     return p.categoryId === activeTab;
   }).slice(0, 8);

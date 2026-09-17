@@ -1,12 +1,24 @@
 import React from 'react';
-import { Truck, ShieldCheck, Phone, Zap, Star, MessageSquare, Gauge, CheckCircle2, MapPin } from 'lucide-react';
+import { Truck, ShieldCheck, Phone, Zap, Star, MessageSquare, Gauge, CheckCircle2, MapPin, Megaphone } from 'lucide-react';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl } from '../utils/whatsapp';
+import { useApp } from '../context/AppContext';
 
 export const AnnouncementTicker: React.FC = () => {
+  const { storeConfig } = useApp();
+
   const headlineItems = [
+    ...(storeConfig.announcementBannerActive && storeConfig.announcementBannerText
+      ? [
+          {
+            icon: Megaphone,
+            text: storeConfig.announcementBannerText,
+            accent: true,
+          },
+        ]
+      : []),
     {
       icon: MapPin,
-      text: 'Official Store: Shop No. 83, Stadium Park, Sheikhupura • Open 9:00 AM – 9:00 PM Daily',
+      text: `Official Store: ${storeConfig.shopAddress} • ${storeConfig.timingsWeekdays || storeConfig.shopHours || '11:00 AM - 10:30 PM'}`,
       accent: true,
     },
     {
@@ -16,7 +28,7 @@ export const AnnouncementTicker: React.FC = () => {
     },
     {
       icon: Phone,
-      text: `Store Desk & WhatsApp Support: ${WHATSAPP_DISPLAY}`,
+      text: `Store Desk & WhatsApp Support: ${storeConfig.primaryWhatsApp || WHATSAPP_DISPLAY}`,
       accent: true,
     },
     {

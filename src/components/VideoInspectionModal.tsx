@@ -15,7 +15,7 @@ import { useApp } from '../context/AppContext';
 import { formatPKR } from '../utils/currency';
 
 export const VideoInspectionModal: React.FC = () => {
-  const { videoInspectionProduct, closeVideoInspection } = useApp();
+  const { videoInspectionProduct, closeVideoInspection, addVideoInspectionRequest } = useApp();
   const [customerCity, setCustomerCity] = useState('Lahore');
   const [notes, setNotes] = useState('');
 
@@ -190,6 +190,15 @@ export const VideoInspectionModal: React.FC = () => {
               href={whatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                addVideoInspectionRequest({
+                  productId: product.id,
+                  productName: product.name,
+                  customerPhone: '+92 3XX XXXXXXX',
+                  customerCity: customerCity,
+                  notes: notes || '15-second unboxing video & serial check requested before dispatch',
+                });
+              }}
               className="flex-1 sm:flex-initial py-2.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(37,211,102,0.4)] cursor-pointer"
             >
               <Phone className="w-4 h-4 fill-black" />

@@ -25,6 +25,8 @@ import {
   Zap,
   Store,
   X,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl, getWhatsAppOrderTrackingUrl, getWhatsAppStorePickupUrl } from '../utils/whatsapp';
@@ -36,7 +38,20 @@ interface InfoViewProps {
 }
 
 export const InformationViews: React.FC<InfoViewProps> = ({ section }) => {
-  const { trackOrder, submitComplaint, orders, showToast } = useApp();
+  const {
+    trackOrder,
+    submitComplaint,
+    orders,
+    showToast,
+    user,
+    userProfile,
+    isAdmin,
+    isSuperAdmin,
+    loginWithGoogle,
+    logout,
+    setIsAuthModalOpen,
+    setCurrentPage,
+  } = useApp();
 
   // Order tracking state
   const [trackingIdInput, setTrackingIdInput] = useState('');
@@ -403,24 +418,84 @@ export const InformationViews: React.FC<InfoViewProps> = ({ section }) => {
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               {/* Profile identity */}
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#25D366] to-[#1ea952] text-black font-black font-display text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,211,102,0.35)] shrink-0">
-                  AR
-                </div>
+                {user?.photoURL ? (
+                  <img
+                    referrerPolicy="no-referrer"
+                    src={user.photoURL}
+                    alt={user.displayName || 'User'}
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#25D366] shadow-[0_0_20px_rgba(37,211,102,0.35)] shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#25D366] to-[#1ea952] text-black font-black font-display text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,211,102,0.35)] shrink-0">
+                    {user?.displayName
+                      ? user.displayName.slice(0, 2).toUpperCase()
+                      : user?.email
+                      ? user.email.slice(0, 2).toUpperCase()
+                      : 'BB'}
+                  </div>
+                )}
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl sm:text-2xl font-display font-black text-white uppercase tracking-wide">
-                      Ahmad Raza
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl sm:text-2xl font-display font-black text-white tracking-wide">
+                      {user ? user.displayName || user.email?.split('@')[0] : 'Guest Customer'}
                     </h2>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 text-[10px] font-bold uppercase tracking-wider">
-                      Verified VIP
-                    </span>
+                    {isSuperAdmin ? (
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">
+                        Store Owner (Super Admin)
+                      </span>
+                    ) : isAdmin ? (
+                      <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold uppercase tracking-wider">
+                        Store Staff
+                      </span>
+                    ) : user ? (
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 text-[10px] font-bold uppercase tracking-wider">
+                        Verified Customer
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-400 text-[10px] font-bold uppercase tracking-wider">
+                        Guest
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-zinc-400 mt-0.5">
-                    Member ID: <span className="font-mono text-zinc-300 font-bold">#BB-VIP-78601</span> • Lahore, Pakistan
+                    {user?.email ? (
+                      <>Email: <span className="font-mono text-zinc-300 font-bold">{user.email}</span></>
+                    ) : (
+                      'Sign in with Google to sync orders, warranty claims, and VIP points.'
+                    )}
                   </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    Primary Phone: <span className="font-mono text-zinc-400">+92 300 8472911</span>
-                  </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    {user ? (
+                      <button
+                        type="button"
+                        onClick={logout}
+                        className="text-xs text-zinc-400 hover:text-rose-400 flex items-center gap-1 transition-colors"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setIsAuthModalOpen(true)}
+                        className="text-xs text-[#25D366] hover:underline font-bold flex items-center gap-1"
+                      >
+                        <LogIn className="w-3.5 h-3.5" />
+                        <span>Sign In with Google</span>
+                      </button>
+                    )}
+
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage('admin')}
+                        className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 ml-2 bg-emerald-500/10 px-2.5 py-0.5 rounded-md border border-emerald-500/30"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>Launch Admin Desk</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

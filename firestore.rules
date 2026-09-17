@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Hardened Security Primitives
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Owner and Admin Gatekeeper
+    // Specifically grants elevated access to itswaleedahmed@gmail.com and recorded admins
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == 'itswaleedahmed@gmail.com' && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // User Profile Validation
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() <= 128 && data.uid == request.auth.uid &&
+             data.email is string && data.email.size() <= 128 &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 500)) &&
+             (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() <= 30)) &&
+             (!('shippingCity' in data) || (data.shippingCity is string && data.shippingCity.size() <= 50)) &&
+             (!('shippingAddress' in data) || (data.shippingAddress is string && data.shippingAddress.size() <= 250)) &&
+             (!('role' in data) || (data.role in ['customer', 'admin']));
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUserProfile(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUserProfile(incoming()) &&
+                    (!('role' in incoming()) || incoming().role == existing().role || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Customer Orders & Quotations Validation
+    function isValidOrder(data) {
+      return data.orderId is string && data.orderId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 && data.userId == request.auth.uid &&
+             data.customerName is string && data.customerName.size() <= 100 &&
+             data.customerPhone is string && data.customerPhone.size() <= 30 &&
+             data.totalPKR is number && data.totalPKR >= 0 &&
+             data.status in ['pending', 'confirmed', 'dispatched', 'delivered', 'cancelled'];
+    }
+
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(orderId) && isValidOrder(incoming());
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.userId == request.auth.uid &&
+        incoming().status == 'cancelled' &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Public Store Configuration (Store hours, announcements, address)
+    match /storeConfig/{configId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Live Store Inventory & Real-time Products Management
+    function isValidProduct(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 150 &&
+             data.pricePKR is number && data.pricePKR >= 0 &&
+             data.inStock is bool;
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
+      allow update: if isAdmin() && isValidId(productId);
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -18,6 +18,12 @@ import {
   Volume2,
   VolumeX,
   RefreshCw,
+  ShieldAlert,
+  User as UserIcon,
+  ShieldCheck,
+  LogIn,
+  LogOut,
+  Truck,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useParticles } from './ParticleBurst';
@@ -44,8 +50,17 @@ export const Header: React.FC = () => {
     isSoundEnabled,
     toggleSound,
     openTradeIn,
+    user,
+    userProfile,
+    isAdmin,
+    isSuperAdmin,
+    setIsAuthModalOpen,
+    logout,
   } = useApp();
   const { cartBounce } = useParticles();
+
+  // Strict check: only itswaleedahmed@gmail.com can see the Admin Desk entrance
+  const isOwnerAdmin = Boolean(user && user.email?.toLowerCase() === 'itswaleedahmed@gmail.com');
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -83,29 +98,28 @@ export const Header: React.FC = () => {
     openProductModal(p);
   };
 
+  const handleLogoClick = () => {
+    setSelectedCategorySlug(null);
+    setCurrentPage('home');
+  };
+
   const navItems = [
     { label: 'Shop Catalog', page: 'shop' as const, icon: ShoppingCart },
     { label: 'PC Builder', page: 'pc-builder' as const, icon: Wrench, highlight: true },
     { label: 'FPS Estimator', page: 'fps-estimator' as const, icon: Gauge, highlight: true },
-    { label: 'Compare', page: 'compare' as const, icon: Scale, badge: compareList.length },
     { label: 'Prebuilt Rigs', page: 'community-builds' as const, icon: Cpu },
-    { label: 'Services', page: 'services' as const, icon: Sparkles },
-    { label: 'Sheikhupura Store', page: 'store-locator' as const, icon: MapPin },
-    { label: 'Track Order', page: 'my-account' as const, icon: PackageCheck },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-[#0B0B0C]/95 backdrop-blur-md border-b border-white/10 shadow-2xl">
       {/* Primary header bar */}
-      <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-[1720px] w-full mx-auto px-3 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex items-center justify-between h-18 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Brand Name */}
           <button
-            onClick={() => {
-              setSelectedCategorySlug(null);
-              setCurrentPage('home');
-            }}
+            onClick={handleLogoClick}
             className="flex items-center text-left group focus:outline-none shrink-0 cursor-pointer"
+            title="Bhai Bhai Tech World Home"
           >
             <BrandLogo size="md" subtext="Shop #83, Stadium Park, Sheikhupura" />
           </button>
@@ -292,6 +306,56 @@ export const Header: React.FC = () => {
               <span className="sr-only">Toggle SFX</span>
             </button>
 
+            {/* Admin Desk Shortcut (ONLY displayed when logged in as authorized store owner itswaleedahmed@gmail.com) */}
+            {isOwnerAdmin && (
+              <button
+                id="btn-header-admin-desk"
+                type="button"
+                onClick={() => setCurrentPage('admin')}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] shrink-0"
+                title="Open Store Admin Desk (Verified Access)"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="hidden xl:inline">Admin Desk</span>
+              </button>
+            )}
+
+            {/* User Account / Sign In Button */}
+            {user ? (
+              <button
+                id="btn-header-user-account"
+                type="button"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-2 bg-[#16171B] hover:bg-white/10 text-zinc-200 px-3 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-all text-xs shrink-0"
+                title={`Account: ${user.email}`}
+              >
+                {user.photoURL ? (
+                  <img
+                    referrerPolicy="no-referrer"
+                    src={user.photoURL}
+                    alt="User"
+                    className="w-5 h-5 rounded-full object-cover border border-[#25D366]"
+                  />
+                ) : (
+                  <UserIcon className="w-4 h-4 text-[#25D366]" />
+                )}
+                <span className="hidden lg:inline font-medium max-w-[85px] truncate">
+                  {user.displayName?.split(' ')[0] || 'Account'}
+                </span>
+              </button>
+            ) : (
+              <button
+                id="btn-header-signin"
+                type="button"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-1.5 bg-[#16171B] hover:bg-white/10 text-zinc-300 hover:text-white px-3 py-2 rounded-lg border border-white/10 hover:border-white/20 transition-all text-xs font-semibold shrink-0"
+                title="Sign in with Google"
+              >
+                <LogIn className="w-4 h-4 text-[#25D366]" />
+                <span className="hidden lg:inline">Sign In</span>
+              </button>
+            )}
+
             {/* WhatsApp Direct CTA */}
             <a
               href={getWhatsAppGeneralUrl()}
@@ -314,16 +378,16 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Secondary navigation bar */}
-        <nav className="hidden md:flex items-center justify-between border-t border-white/5 py-2.5 text-xs font-semibold overflow-x-auto no-scrollbar gap-4">
-          <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+        <nav className="hidden md:flex items-center justify-between border-t border-white/5 py-2 text-xs font-semibold gap-2 lg:gap-3 w-full overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-1.5 lg:gap-3 shrink-0 flex-nowrap">
             {/* Prominent Browse All Categories Button */}
             <button
               onClick={() => setIsCategoriesDrawerOpen(true)}
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase px-3.5 py-1.5 rounded-lg transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] tracking-wide shrink-0 active:scale-95"
+              className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase px-3 py-1.5 rounded-lg transition-all shadow-[0_0_12px_rgba(37,211,102,0.25)] tracking-wide shrink-0 active:scale-95 cursor-pointer"
             >
-              <LayoutGrid className="w-4 h-4 text-black stroke-[2.5]" />
-              <span>Browse All Categories</span>
-              <ChevronDown className="w-3.5 h-3.5 text-black" />
+              <LayoutGrid className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+              <span>Categories</span>
+              <ChevronDown className="w-3 h-3 text-black" />
             </button>
 
             {navItems.map((item) => {
@@ -336,23 +400,18 @@ export const Header: React.FC = () => {
                     setSelectedCategorySlug(null);
                     setCurrentPage(item.page);
                   }}
-                  className={`flex items-center gap-1.5 transition-colors py-1 relative whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 transition-colors py-1 px-1.5 rounded-md relative whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
-                      ? 'text-[#25D366] font-bold'
+                      ? 'text-[#25D366] font-bold bg-[#25D366]/10'
                       : item.highlight
-                      ? 'text-emerald-300 hover:text-[#25D366]'
-                      : 'text-zinc-300 hover:text-white'
+                      ? 'text-emerald-300 hover:text-[#25D366] hover:bg-white/5'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span>{item.label}</span>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <span className="bg-[#25D366]/20 text-[#25D366] text-[10px] px-1.5 py-0.2 rounded-full border border-[#25D366]/40">
-                      {item.badge}
-                    </span>
-                  )}
                   {isActive && (
-                    <span className="absolute -bottom-2.5 left-0 right-0 h-0.5 bg-[#25D366] shadow-[0_0_8px_#25D366]" />
+                    <span className="absolute -bottom-2 left-1 right-1 h-0.5 bg-[#25D366] shadow-[0_0_8px_#25D366]" />
                   )}
                 </button>
               );
@@ -361,91 +420,126 @@ export const Header: React.FC = () => {
             {/* High-Conversion Trade-In & Upgrade CTA */}
             <button
               onClick={() => openTradeIn(null)}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all shrink-0 cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all shrink-0 cursor-pointer active:scale-95"
               title="Trade-in your old GPU, CPU, or console for cash credit"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Trade-In & Upgrade</span>
-              <span className="bg-amber-400 text-black text-[9px] font-mono font-black px-1.5 py-0.2 rounded uppercase">
+              <span>Trade-In</span>
+              <span className="bg-amber-400 text-black text-[9px] font-mono font-black px-1 rounded uppercase">
                 Save PKR
               </span>
             </button>
 
-            {/* Info / Legal drop */}
+            {/* More / Store & Trust Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsInfoDropdownOpen(!isInfoDropdownOpen)}
-                className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors py-1"
+                className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors py-1 px-1.5 rounded-md hover:bg-white/5 cursor-pointer"
               >
-                <span>Help & Trust</span>
+                <span>More & Support</span>
                 <ChevronDown className="w-3 h-3" />
               </button>
 
               {isInfoDropdownOpen && (
                 <div
                   onMouseLeave={() => setIsInfoDropdownOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-48 bg-[#16171B] border border-white/10 rounded-xl shadow-2xl py-2 z-50"
+                  className="absolute top-full left-0 mt-2 w-56 bg-[#16171B] border border-white/10 rounded-xl shadow-2xl py-2 z-50 divide-y divide-white/5"
                 >
-                  <button
-                    onClick={() => {
-                      setCurrentPage('about');
-                      setIsInfoDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
-                  >
-                    About Us
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrentPage('faq');
-                      setIsInfoDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
-                  >
-                    Delivery & FAQ
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrentPage('warranty-policy');
-                      setIsInfoDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
-                  >
-                    Warranty & RMA
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrentPage('return-policy');
-                      setIsInfoDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
-                  >
-                    Return & Refund
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrentPage('complaints');
-                      setIsInfoDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
-                  >
-                    Complaints & Support
-                  </button>
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setCurrentPage('store-locator');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                    >
+                      <MapPin className="w-3.5 h-3.5 text-[#25D366]" />
+                      <span>Sheikhupura Showroom</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('services');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#25D366]" />
+                      <span>Services & Assembly</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('my-account');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                    >
+                      <PackageCheck className="w-3.5 h-3.5 text-[#25D366]" />
+                      <span>Track Courier Order</span>
+                    </button>
+                  </div>
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setCurrentPage('warranty-policy');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                    >
+                      Warranty & 7-Day Check
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('faq');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                    >
+                      Delivery & FAQ
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('return-policy');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                    >
+                      Return & Refund
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('complaints');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                    >
+                      Complaints Cell
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrentPage('about');
+                        setIsInfoDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                    >
+                      About Us
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-zinc-400">
+          {/* Right Tools - ALWAYS visible on screen */}
+          <div className="flex items-center gap-3 text-zinc-400 shrink-0 ml-auto">
             <button
               onClick={() => setCurrentPage('price-watch')}
-              className="hover:text-emerald-400 transition-colors"
+              className="hover:text-emerald-400 transition-colors text-xs whitespace-nowrap"
             >
               ⚡ Price Drops
             </button>
             <button
               onClick={() => setCurrentPage('recently-restocked')}
-              className="hover:text-emerald-400 transition-colors"
+              className="hover:text-emerald-400 transition-colors text-xs whitespace-nowrap"
             >
               📦 Fresh Restocks
             </button>
@@ -456,6 +550,100 @@ export const Header: React.FC = () => {
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-[#0e0f12] px-4 py-4 space-y-3">
+          {/* User Account / Auth Card in Mobile Menu */}
+          <div className="bg-[#16171B] border border-white/10 rounded-xl p-3">
+            {user ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    {user.photoURL ? (
+                      <img
+                        referrerPolicy="no-referrer"
+                        src={user.photoURL}
+                        alt="User"
+                        className="w-9 h-9 rounded-full object-cover border border-[#25D366]"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-[#25D366]/20 text-[#25D366] font-bold flex items-center justify-center text-sm border border-[#25D366]/40">
+                        {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <span>{user.displayName || 'Customer'}</span>
+                        {isSuperAdmin && (
+                          <span className="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded font-mono">
+                            Owner
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-zinc-400 truncate max-w-[180px]">
+                        {user.email}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await logout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="p-1.5 text-zinc-400 hover:text-rose-400 transition-colors"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentPage('my-account');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex-1 py-1.5 px-2 bg-white/10 hover:bg-white/15 text-white rounded-lg text-xs font-medium text-center"
+                  >
+                    My Account & Orders
+                  </button>
+
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentPage('admin');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex-1 py-1.5 px-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-1"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Admin Desk</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-left">
+                  <div className="text-xs font-bold text-white">Customer Account</div>
+                  <div className="text-[11px] text-zinc-400">Sign in to track orders & rewards</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="py-1.5 px-3 bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1.5 shrink-0"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Mobile search */}
           <div className="relative mb-3">
             <input
@@ -488,6 +676,42 @@ export const Header: React.FC = () => {
             <span>Browse All Categories</span>
           </button>
 
+          {/* Mobile Admin Entrance - strictly hidden from standard users, only shown for authorized super admin */}
+          {isOwnerAdmin && (
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setCurrentPage('admin');
+              }}
+              className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold text-xs uppercase shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Admin Desk (Verified Access)</span>
+            </button>
+          )}
+
+          {/* Quick Action Badges */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => {
+                setCurrentPage('price-watch');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-bold"
+            >
+              <span>⚡ Price Drops</span>
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('recently-restocked');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold"
+            >
+              <span>📦 Fresh Restocks</span>
+            </button>
+          </div>
+
           {/* Mobile Trade-In CTA */}
           <button
             onClick={() => {
@@ -518,14 +742,45 @@ export const Header: React.FC = () => {
                 </button>
               );
             })}
+            <button
+              onClick={() => {
+                setCurrentPage('store-locator');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-2 p-2.5 rounded-lg bg-[#16171B] text-zinc-200 text-xs font-semibold"
+            >
+              <MapPin className="w-4 h-4 text-[#25D366]" />
+              <span>Showroom</span>
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('services');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-2 p-2.5 rounded-lg bg-[#16171B] text-zinc-200 text-xs font-semibold"
+            >
+              <Sparkles className="w-4 h-4 text-[#25D366]" />
+              <span>Services</span>
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('my-account');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-2 p-2.5 rounded-lg bg-[#16171B] text-zinc-200 text-xs font-semibold col-span-2"
+            >
+              <Truck className="w-4 h-4 text-[#25D366]" />
+              <span>Track Courier Order (TCS / Leopard / Daewoo)</span>
+            </button>
           </div>
 
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
+          <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
             <button
               onClick={() => {
                 setCurrentPage('about');
                 setIsMobileMenuOpen(false);
               }}
+              className="hover:text-[#25D366]"
             >
               About
             </button>
@@ -534,6 +789,7 @@ export const Header: React.FC = () => {
                 setCurrentPage('faq');
                 setIsMobileMenuOpen(false);
               }}
+              className="hover:text-[#25D366]"
             >
               FAQ
             </button>
@@ -542,14 +798,25 @@ export const Header: React.FC = () => {
                 setCurrentPage('warranty-policy');
                 setIsMobileMenuOpen(false);
               }}
+              className="hover:text-[#25D366]"
             >
               Warranty
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('return-policy');
+                setIsMobileMenuOpen(false);
+              }}
+              className="hover:text-[#25D366]"
+            >
+              Returns
             </button>
             <button
               onClick={() => {
                 setCurrentPage('complaints');
                 setIsMobileMenuOpen(false);
               }}
+              className="hover:text-[#25D366]"
             >
               Complaints
             </button>

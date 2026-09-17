@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PRODUCTS } from '../data/products';
 import { ProductCard } from './ProductCard';
 import { useApp } from '../context/AppContext';
 
@@ -28,10 +27,10 @@ const cardVariants = {
 };
 
 export const LatestProducts: React.FC = () => {
-  const { setCurrentPage, setSelectedCategorySlug } = useApp();
+  const { products, setCurrentPage, setSelectedCategorySlug } = useApp();
 
   // Fresh arrivals (SSDs, PSUs, Coolers, Gaming mice, GPUs)
-  const latestItems = PRODUCTS.filter(
+  const latestItems = products.filter(
     (p) => p.isNew || ['storage', 'power-supplies', 'ram', 'pc-cases'].includes(p.categoryId)
   ).slice(0, 8);
 
