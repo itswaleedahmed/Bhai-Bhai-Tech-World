@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #0B0B0C;
+    color: #F2F2F0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.015em;
+  }
+
+  .font-mono-code {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Custom Tactical Overclock & Midnight Emerald Styles */
+.bg-midnight-950 {
+  background-color: #0B0B0C;
+}
+.bg-midnight-900 {
+  background-color: #121316;
+}
+.bg-midnight-800 {
+  background-color: #18191E;
+}
+.bg-midnight-700 {
+  background-color: #21232A;
+}
+
+.border-midnight-edge {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.border-emerald-edge {
+  border-color: rgba(37, 211, 102, 0.3);
+}
+
+.emerald-glow {
+  box-shadow: 0 0 25px -4px rgba(37, 211, 102, 0.25);
+}
+
+.emerald-glow-lg {
+  box-shadow: 0 0 40px -2px rgba(37, 211, 102, 0.35);
+}
+
+.text-emerald-brand {
+  color: #25D366;
+}
+
+.bg-emerald-brand {
+  background-color: #25D366;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom dark scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0B0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #252830;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #25D366;
+}
+
+/* Subtle Pulse Animation for Hero CTAs */
+@keyframes subtleCtaPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+  }
+  50% {
+    transform: scale(1.035);
+    box-shadow: 0 0 35px rgba(37, 211, 102, 0.75), 0 0 12px rgba(37, 211, 102, 0.5);
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtleCtaPulse 2.4s ease-in-out infinite;
+}
+
+/* Animated Headline Row (Continuous Ticker / Marquee) */
+@keyframes tickerRow {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-ticker-row {
+  display: flex;
+  width: max-content;
+  animation: tickerRow 45s linear infinite;
+  will-change: transform;
+}
+
+.animate-ticker-row-fast {
+  display: flex;
+  width: max-content;
+  animation: tickerRow 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-ticker-row:hover,
+.animate-ticker-row-fast:hover {
+  animation-play-state: paused;
+}
+
+/* Gentle Periodic Bounce for Idle Floating WhatsApp (>30s) */
+@keyframes periodicBounce {
+  0%, 65%, 100% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(-9px);
+  }
+  78% {
+    transform: translateY(0);
+  }
+  84% {
+    transform: translateY(-4px);
+  }
+  90% {
+    transform: translateY(0);
+  }
+}
+
+.animate-periodic-bounce {
+  animation: periodicBounce 3.6s ease-in-out infinite;
+}
+
+/* Tactile Spring Stretch Animation with Neon Color-Shifting Glow Pulse */
+@keyframes springStretchPill {
+  0% {
+    transform: scaleX(0.92) scaleY(1.04);
+    background-color: #25D366;
+    box-shadow: 0 4px 25px rgba(37, 211, 102, 0.5), 0 0 0 rgba(57, 255, 116, 0);
+  }
+  35% {
+    transform: scaleX(1.07) scaleY(0.96);
+    background-color: #39FF74;
+    box-shadow: 0 6px 36px rgba(57, 255, 116, 0.9), 0 0 25px rgba(57, 255, 116, 0.7);
+  }
+  70% {
+    transform: scaleX(0.99) scaleY(1.01);
+    background-color: #2fed73;
+    box-shadow: 0 5px 30px rgba(47, 237, 115, 0.75), 0 0 16px rgba(57, 255, 116, 0.45);
+  }
+  100% {
+    transform: scaleX(1) scaleY(1);
+    background-color: #25D366;
+    box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6), 0 0 10px rgba(57, 255, 116, 0.25);
+  }
+}
+
+.animate-spring-stretch {
+  animation: springStretchPill 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: right center;
+}
+
+.animate-spring-stretch-left {
+  animation: springStretchPill 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: left center;
+}
+
+/* Lifted state during drag on #btn-floating-whatsapp-link: slight scale-down + increased shadow opacity to feel lifted */
+#btn-floating-whatsapp-link.floating-btn-lifted,
+.floating-btn-lifted {
+  transform: scale(0.92) !important;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.98), 0 14px 28px rgba(0, 0, 0, 0.85), 0 0 35px rgba(37, 211, 102, 0.85) !important;
+  filter: brightness(1.08) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.7));
+  cursor: grabbing !important;
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Subtle 'magnetic' snap animation effect on #btn-floating-whatsapp-link when entering a docking zone during drag */
+@keyframes magneticSnapFeedback {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.98), 0 0 35px rgba(37, 211, 102, 0.85);
+  }
+  38% {
+    transform: scale(1.09);
+    box-shadow: 0 0 55px rgba(37, 211, 102, 1), 0 0 30px #ffffff, 0 20px 40px rgba(0, 0, 0, 0.9);
+  }
+  70% {
+    transform: scale(0.97);
+    box-shadow: 0 0 45px rgba(37, 211, 102, 0.95), 0 15px 35px rgba(0, 0, 0, 0.9);
+  }
+  100% {
+    transform: scale(1.02);
+    box-shadow: 0 0 42px rgba(37, 211, 102, 0.92), 0 18px 38px rgba(0, 0, 0, 0.92);
+  }
+}
+
+#btn-floating-whatsapp-link.floating-btn-magnetic-snap,
+.floating-btn-magnetic-snap {
+  animation: magneticSnapFeedback 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  outline: 3px solid rgba(255, 255, 255, 0.92);
+  outline-offset: 3px;
+  cursor: grabbing !important;
+}
+
+/* Soft glow pulse effect to pill body upon completion of expansion animation to highlight interactivity */
+@keyframes pillBodyGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.25), inset 0 0 4px rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(37, 211, 102, 0.9), 0 0 12px rgba(255, 255, 255, 0.75), inset 0 0 8px rgba(255, 255, 255, 0.45);
+    background-color: rgba(0, 0, 0, 0.16);
+  }
+}
+
+#btn-floating-whatsapp-link .animate-pill-body-glow,
+.animate-pill-body-glow {
+  animation: pillBodyGlowPulse 1.8s ease-in-out infinite;
+}
+
+/* Printable Quotation Styles for clean A4 printing */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #quotation-printable-area, #quotation-printable-area * {
+    visibility: visible;
+  }
+  #quotation-printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+
+

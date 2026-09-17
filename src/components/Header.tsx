@@ -1,0 +1,599 @@
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Search,
+  ShoppingCart,
+  Heart,
+  Scale,
+  Menu,
+  X,
+  Cpu,
+  Wrench,
+  Gauge,
+  Sparkles,
+  Phone,
+  PackageCheck,
+  ChevronDown,
+  LayoutGrid,
+  MapPin,
+  Volume2,
+  VolumeX,
+  RefreshCw,
+} from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { useParticles } from './ParticleBurst';
+import { PRODUCTS } from '../data/products';
+import { formatPKR } from '../utils/currency';
+import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl } from '../utils/whatsapp';
+import { BrowseCategoriesDrawer } from './BrowseCategoriesDrawer';
+import { BrandLogo } from './BrandLogo';
+
+export const Header: React.FC = () => {
+  const {
+    currentPage,
+    setCurrentPage,
+    setSelectedCategorySlug,
+    cartItemCount,
+    cartSubtotal,
+    setIsCartOpen,
+    wishlist,
+    compareList,
+    setIsCompareOpen,
+    openProductModal,
+    searchQuery,
+    setSearchQuery,
+    isSoundEnabled,
+    toggleSound,
+    openTradeIn,
+  } = useApp();
+  const { cartBounce } = useParticles();
+
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
+  const [isCategoriesDrawerOpen, setIsCategoriesDrawerOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Close search dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter products for live search
+  const filteredProducts = searchQuery.trim()
+    ? PRODUCTS.filter((p) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q) ||
+          p.categoryName.toLowerCase().includes(q) ||
+          Object.values(p.specs).some((val) => val.toLowerCase().includes(q))
+        );
+      }).slice(0, 6)
+    : [];
+
+  const handleSelectSearchProduct = (p: typeof PRODUCTS[0]) => {
+    setIsSearchFocused(false);
+    setSearchQuery('');
+    openProductModal(p);
+  };
+
+  const navItems = [
+    { label: 'Shop Catalog', page: 'shop' as const, icon: ShoppingCart },
+    { label: 'PC Builder', page: 'pc-builder' as const, icon: Wrench, highlight: true },
+    { label: 'FPS Estimator', page: 'fps-estimator' as const, icon: Gauge, highlight: true },
+    { label: 'Compare', page: 'compare' as const, icon: Scale, badge: compareList.length },
+    { label: 'Prebuilt Rigs', page: 'community-builds' as const, icon: Cpu },
+    { label: 'Services', page: 'services' as const, icon: Sparkles },
+    { label: 'Sheikhupura Store', page: 'store-locator' as const, icon: MapPin },
+    { label: 'Track Order', page: 'my-account' as const, icon: PackageCheck },
+  ];
+
+  return (
+    <header className="sticky top-0 z-40 bg-[#0B0B0C]/95 backdrop-blur-md border-b border-white/10 shadow-2xl">
+      {/* Primary header bar */}
+      <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex items-center justify-between h-20 gap-4">
+          {/* Logo & Brand Name */}
+          <button
+            onClick={() => {
+              setSelectedCategorySlug(null);
+              setCurrentPage('home');
+            }}
+            className="flex items-center text-left group focus:outline-none shrink-0 cursor-pointer"
+          >
+            <BrandLogo size="md" subtext="Shop #83, Stadium Park, Sheikhupura" />
+          </button>
+
+          {/* Search bar with instant autocomplete */}
+          <div ref={searchRef} className="relative flex-1 max-w-lg hidden md:block">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchFocused(true);
+                }}
+                onFocus={() => setIsSearchFocused(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setIsSearchFocused(false);
+                    if (currentPage !== 'shop') {
+                      setSelectedCategorySlug(null);
+                      setCurrentPage('shop');
+                    }
+                  }
+                }}
+                placeholder="Search GPUs, Ryzen 9800X3D, RTX 5070, RAM, monitors..."
+                className="w-full bg-[#16171B] text-sm text-zinc-100 placeholder-zinc-500 pl-10 pr-16 py-2.5 rounded-lg border border-white/10 focus:border-[#25D366] focus:outline-none focus:ring-1 focus:ring-[#25D366] transition-all"
+              />
+              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-2.5 text-zinc-400 hover:text-white text-xs px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Live Autocomplete dropdown */}
+            {isSearchFocused && searchQuery.trim() && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[#121316] border border-white/15 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="p-2 border-b border-white/10 flex items-center justify-between text-xs text-zinc-400">
+                  <span>Results matching "{searchQuery}"</span>
+                  <span className="text-[#25D366]">{filteredProducts.length} items found</span>
+                </div>
+
+                {filteredProducts.length > 0 ? (
+                  <div className="divide-y divide-white/5 max-h-96 overflow-y-auto">
+                    {filteredProducts.map((p) => (
+                      <div
+                        key={p.id}
+                        onClick={() => handleSelectSearchProduct(p)}
+                        className="p-3 flex items-center gap-3 hover:bg-white/5 cursor-pointer transition-colors"
+                      >
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="w-12 h-12 object-cover rounded-md bg-black/40 border border-white/10 shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-zinc-200 truncate">{p.name}</p>
+                          <p className="text-[11px] text-zinc-400">{p.categoryName} • {p.brand}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="font-display font-bold text-sm text-[#25D366]">
+                            {formatPKR(p.pricePKR)}
+                          </p>
+                          {p.inStock ? (
+                            <span className="text-[10px] text-emerald-400 font-medium">In Stock</span>
+                          ) : (
+                            <span className="text-[10px] text-rose-400">Call to Order</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => {
+                        setIsSearchFocused(false);
+                        setSelectedCategorySlug(null);
+                        setCurrentPage('shop');
+                      }}
+                      className="w-full py-2.5 text-center text-xs font-bold text-[#25D366] hover:bg-[#25D366]/10 transition-colors"
+                    >
+                      View all results in Shop →
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-zinc-400 text-xs">
+                    <p>No direct matches found for "{searchQuery}".</p>
+                    <p className="mt-1 text-zinc-500">
+                      Need custom hardware? Message us on WhatsApp directly!
+                    </p>
+                    <a
+                      href={getWhatsAppGeneralUrl(`checking availability for ${searchQuery}`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-[#25D366] bg-[#25D366]/10 px-3 py-1.5 rounded-lg border border-[#25D366]/30"
+                    >
+                      <Phone className="w-3 h-3" />
+                      Inquire on WhatsApp
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right actions: Compare, Wishlist, Cart, WhatsApp */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Compare pill */}
+            <button
+              onClick={() => setIsCompareOpen(true)}
+              className="relative p-2.5 rounded-lg bg-[#16171B] hover:bg-white/10 text-zinc-300 hover:text-white transition-colors border border-white/5"
+              title="Compare Products"
+            >
+              <Scale className="w-5 h-5" />
+              {compareList.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#25D366] text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">
+                  {compareList.length}
+                </span>
+              )}
+            </button>
+
+            {/* Wishlist */}
+            <button
+              onClick={() => {
+                setSelectedCategorySlug(null);
+                setCurrentPage('shop');
+              }}
+              className="relative p-2.5 rounded-lg bg-[#16171B] hover:bg-white/10 text-zinc-300 hover:text-white transition-colors border border-white/5"
+              title="Saved Wishlist"
+            >
+              <Heart className="w-5 h-5" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+                  {wishlist.length}
+                </span>
+              )}
+            </button>
+
+            {/* Cart Button */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className={`flex items-center gap-2 bg-[#16171B] hover:bg-white/10 text-zinc-200 px-3.5 py-2 rounded-lg border transition-all duration-300 ${
+                cartBounce
+                  ? 'border-[#25D366] scale-110 shadow-[0_0_20px_rgba(37,211,102,0.5)] bg-[#25D366]/20'
+                  : 'border-white/10 hover:border-white/20'
+              }`}
+            >
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5 text-[#25D366]" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#25D366] text-black text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </div>
+              <div className="hidden lg:block text-left text-xs">
+                <span className="text-[10px] text-zinc-400 block leading-none">Cart</span>
+                <span className="font-display font-bold text-white text-xs">
+                  {formatPKR(cartSubtotal)}
+                </span>
+              </div>
+            </button>
+
+            {/* Global Sound Effects Toggle */}
+            <button
+              id="btn-global-sound-toggle"
+              type="button"
+              onClick={toggleSound}
+              className={`relative p-2.5 rounded-lg border transition-all ${
+                isSoundEnabled
+                  ? 'bg-[#16171B] hover:bg-[#25D366]/15 text-[#25D366] border-[#25D366]/30 shadow-[0_0_12px_rgba(37,211,102,0.2)]'
+                  : 'bg-[#16171B] hover:bg-white/10 text-zinc-500 border-white/10'
+              }`}
+              title={isSoundEnabled ? 'Sound Effects: ON (Click to Mute)' : 'Sound Effects: MUTED (Click to Unmute)'}
+              aria-label={isSoundEnabled ? 'Mute sound effects' : 'Unmute sound effects'}
+            >
+              {isSoundEnabled ? (
+                <Volume2 className="w-5 h-5 text-[#25D366]" />
+              ) : (
+                <VolumeX className="w-5 h-5 text-zinc-400" />
+              )}
+              <span className="sr-only">Toggle SFX</span>
+            </button>
+
+            {/* WhatsApp Direct CTA */}
+            <a
+              href={getWhatsAppGeneralUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-lg hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] transition-all shrink-0"
+            >
+              <Phone className="w-4 h-4 fill-black" />
+              <span>WhatsApp</span>
+            </a>
+
+            {/* Mobile menu trigger */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg bg-[#16171B] text-zinc-300"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Secondary navigation bar */}
+        <nav className="hidden md:flex items-center justify-between border-t border-white/5 py-2.5 text-xs font-semibold overflow-x-auto no-scrollbar gap-4">
+          <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+            {/* Prominent Browse All Categories Button */}
+            <button
+              onClick={() => setIsCategoriesDrawerOpen(true)}
+              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase px-3.5 py-1.5 rounded-lg transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] tracking-wide shrink-0 active:scale-95"
+            >
+              <LayoutGrid className="w-4 h-4 text-black stroke-[2.5]" />
+              <span>Browse All Categories</span>
+              <ChevronDown className="w-3.5 h-3.5 text-black" />
+            </button>
+
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.page;
+              return (
+                <button
+                  key={item.page}
+                  onClick={() => {
+                    setSelectedCategorySlug(null);
+                    setCurrentPage(item.page);
+                  }}
+                  className={`flex items-center gap-1.5 transition-colors py-1 relative whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? 'text-[#25D366] font-bold'
+                      : item.highlight
+                      ? 'text-emerald-300 hover:text-[#25D366]'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{item.label}</span>
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span className="bg-[#25D366]/20 text-[#25D366] text-[10px] px-1.5 py-0.2 rounded-full border border-[#25D366]/40">
+                      {item.badge}
+                    </span>
+                  )}
+                  {isActive && (
+                    <span className="absolute -bottom-2.5 left-0 right-0 h-0.5 bg-[#25D366] shadow-[0_0_8px_#25D366]" />
+                  )}
+                </button>
+              );
+            })}
+
+            {/* High-Conversion Trade-In & Upgrade CTA */}
+            <button
+              onClick={() => openTradeIn(null)}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all shrink-0 cursor-pointer active:scale-95"
+              title="Trade-in your old GPU, CPU, or console for cash credit"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Trade-In & Upgrade</span>
+              <span className="bg-amber-400 text-black text-[9px] font-mono font-black px-1.5 py-0.2 rounded uppercase">
+                Save PKR
+              </span>
+            </button>
+
+            {/* Info / Legal drop */}
+            <div className="relative">
+              <button
+                onClick={() => setIsInfoDropdownOpen(!isInfoDropdownOpen)}
+                className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors py-1"
+              >
+                <span>Help & Trust</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+
+              {isInfoDropdownOpen && (
+                <div
+                  onMouseLeave={() => setIsInfoDropdownOpen(false)}
+                  className="absolute top-full left-0 mt-2 w-48 bg-[#16171B] border border-white/10 rounded-xl shadow-2xl py-2 z-50"
+                >
+                  <button
+                    onClick={() => {
+                      setCurrentPage('about');
+                      setIsInfoDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                  >
+                    About Us
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentPage('faq');
+                      setIsInfoDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                  >
+                    Delivery & FAQ
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentPage('warranty-policy');
+                      setIsInfoDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                  >
+                    Warranty & RMA
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentPage('return-policy');
+                      setIsInfoDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                  >
+                    Return & Refund
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrentPage('complaints');
+                      setIsInfoDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                  >
+                    Complaints & Support
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-zinc-400">
+            <button
+              onClick={() => setCurrentPage('price-watch')}
+              className="hover:text-emerald-400 transition-colors"
+            >
+              ⚡ Price Drops
+            </button>
+            <button
+              onClick={() => setCurrentPage('recently-restocked')}
+              className="hover:text-emerald-400 transition-colors"
+            >
+              📦 Fresh Restocks
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-white/10 bg-[#0e0f12] px-4 py-4 space-y-3">
+          {/* Mobile search */}
+          <div className="relative mb-3">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setIsMobileMenuOpen(false);
+                  if (currentPage !== 'shop') {
+                    setSelectedCategorySlug(null);
+                    setCurrentPage('shop');
+                  }
+                }
+              }}
+              placeholder="Search components & PCs..."
+              className="w-full bg-[#16171B] text-sm text-zinc-100 placeholder-zinc-500 pl-9 pr-3 py-2 rounded-lg border border-white/10 focus:border-[#25D366] focus:outline-none"
+            />
+            <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
+          </div>
+
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              setIsCategoriesDrawerOpen(true);
+            }}
+            className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg bg-[#25D366] text-black font-black text-xs uppercase"
+          >
+            <LayoutGrid className="w-4 h-4 stroke-[2.5]" />
+            <span>Browse All Categories</span>
+          </button>
+
+          {/* Mobile Trade-In CTA */}
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              openTradeIn(null);
+            }}
+            className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs uppercase"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Trade-In Estimator (Calculate Old Parts)</span>
+          </button>
+
+          <div className="grid grid-cols-2 gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.page}
+                  onClick={() => {
+                    setSelectedCategorySlug(null);
+                    setCurrentPage(item.page);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 p-2.5 rounded-lg bg-[#16171B] text-zinc-200 text-xs font-semibold"
+                >
+                  <Icon className="w-4 h-4 text-[#25D366]" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
+            <button
+              onClick={() => {
+                setCurrentPage('about');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              About
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('faq');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              FAQ
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('warranty-policy');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Warranty
+            </button>
+            <button
+              onClick={() => {
+                setCurrentPage('complaints');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              Complaints
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#16171B] border border-white/10 text-xs">
+            <div className="flex items-center gap-2 text-zinc-300">
+              {isSoundEnabled ? (
+                <Volume2 className="w-4 h-4 text-[#25D366]" />
+              ) : (
+                <VolumeX className="w-4 h-4 text-zinc-400" />
+              )}
+              <span>Sound Effects</span>
+            </div>
+            <button
+              type="button"
+              onClick={toggleSound}
+              className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
+                isSoundEnabled
+                  ? 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40'
+                  : 'bg-white/10 text-zinc-400 border border-white/10'
+              }`}
+            >
+              {isSoundEnabled ? 'ENABLED' : 'MUTED'}
+            </button>
+          </div>
+
+          <a
+            href={getWhatsAppGeneralUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[#25D366] text-black font-bold text-xs uppercase"
+          >
+            <Phone className="w-4 h-4 fill-black" />
+            WhatsApp Hotline: {WHATSAPP_DISPLAY}
+          </a>
+        </div>
+      )}
+
+      {/* Full Categories Drawer */}
+      <BrowseCategoriesDrawer
+        isOpen={isCategoriesDrawerOpen}
+        onClose={() => setIsCategoriesDrawerOpen(false)}
+      />
+    </header>
+  );
+};

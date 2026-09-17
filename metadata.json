@@ -1,0 +1,6 @@
+{
+  "name": "Bhai Bhai Tech World",
+  "description": "Official gaming and PC hardware store of Bhai Bhai Tech World, located at Shop No. 83, Stadium Park, Sheikhupura, with WhatsApp-first ordering, custom PC builder, and nationwide delivery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
