@@ -20,6 +20,7 @@ import { COMPONENTS } from '../data/components';
 import { formatPKR } from '../utils/currency';
 import { useApp } from '../context/AppContext';
 import { Product } from '../types';
+import { scrollToTop } from '../utils/scroll';
 
 interface RigPreset {
   id: string;
@@ -215,6 +216,7 @@ export const UpgradeRigWizard: React.FC = () => {
       setFpsPreselect({ cpuId: analysis.recommendedComponent.id, gpuId: currentGpu.id });
     }
     setCurrentPage('fps-estimator');
+    scrollToTop();
   };
 
   const waInquiryUrl = `https://wa.me/923216886475?text=${encodeURIComponent(

@@ -33,6 +33,8 @@ import { TradeInEstimatorModal } from './components/TradeInEstimatorModal';
 import { VideoInspectionModal } from './components/VideoInspectionModal';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { AuthModal } from './components/AuthModal';
+import { ToastNotificationView } from './components/ToastNotification';
+import { scrollToTop } from './utils/scroll';
 
 const AdminRouteGuard: React.FC = () => {
   const { user, isAuthLoading, setCurrentPage, showToast } = useApp();
@@ -74,11 +76,17 @@ const AppContent: React.FC = () => {
     activeProductModal,
     closeProductModal,
     toast,
+    clearToast,
     user,
     isAuthLoading,
     showToast,
   } = useApp();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Guarantee that every page opens from the top when navigating
+  React.useEffect(() => {
+    scrollToTop();
+  }, [currentPage]);
 
   // Guard admin entrance: check if the logged-in user email is 'itswaleedahmed@gmail.com'. If not, redirect users trying to access the #admin URL back to the home page.
   React.useEffect(() => {
@@ -206,13 +214,8 @@ const AppContent: React.FC = () => {
       <VideoInspectionModal />
       <AuthModal />
 
-      {/* Floating Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#16171B] border border-[#25D366] text-white px-4 py-3 rounded-xl shadow-[0_0_25px_rgba(37,211,102,0.3)] flex items-center gap-2.5 text-xs font-bold animate-in fade-in slide-in-from-bottom-3">
-          <span className="w-2 h-2 rounded-full bg-[#25D366]" />
-          <span>{toast}</span>
-        </div>
-      )}
+      {/* Floating Toast Notification System */}
+      <ToastNotificationView toast={toast} onClose={clearToast} />
     </div>
   );
 };

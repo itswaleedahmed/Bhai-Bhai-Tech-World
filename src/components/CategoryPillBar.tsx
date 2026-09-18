@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useApp } from '../context/AppContext';
+import { scrollToTop } from '../utils/scroll';
 
 export const CategoryPillBar: React.FC = () => {
   const { setSelectedCategorySlug, setCurrentPage, selectedCategorySlug } = useApp();
@@ -31,6 +32,7 @@ export const CategoryPillBar: React.FC = () => {
   const handleSelect = (slug: string) => {
     setSelectedCategorySlug(slug);
     setCurrentPage('shop');
+    scrollToTop();
   };
 
   return (

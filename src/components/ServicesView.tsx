@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Wrench, Phone, CheckCircle, Clock, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { getWhatsAppGeneralUrl, WHATSAPP_DISPLAY } from '../utils/whatsapp';
+import { scrollToTop } from '../utils/scroll';
 
 export const ServicesView: React.FC = () => {
+  useEffect(() => {
+    scrollToTop();
+  }, []);
+
   return (
     <div className="py-8 max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
       {/* Header Banner */}

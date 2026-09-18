@@ -3,6 +3,7 @@ import { ArrowRight, Wrench, Phone, Sparkles, ShieldCheck, Zap, Gauge, ChevronLe
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../context/AppContext';
 import { getWhatsAppGeneralUrl } from '../utils/whatsapp';
+import { scrollToTop } from '../utils/scroll';
 
 export const HeroBanner: React.FC = () => {
   const { setCurrentPage, setSelectedCategorySlug } = useApp();
@@ -16,11 +17,15 @@ export const HeroBanner: React.FC = () => {
       subtitle:
         'Authorised retailer of NVIDIA GeForce RTX 50-Series, AMD Ryzen 9000 & 7000 processors, fast DDR5 RGB memory, and high-refresh gaming monitors in PKR.',
       primaryBtnText: 'Build Your PC',
-      primaryBtnAction: () => setCurrentPage('pc-builder'),
+      primaryBtnAction: () => {
+        setCurrentPage('pc-builder');
+        scrollToTop();
+      },
       secondaryBtnText: 'Browse Catalog',
       secondaryBtnAction: () => {
         setSelectedCategorySlug(null);
         setCurrentPage('shop');
+        scrollToTop();
       },
       image:
         'https://images.unsplash.com/photo-1587202372616-b43abea06c2a?auto=format&fit=crop&w=1200&q=80',
@@ -36,9 +41,13 @@ export const HeroBanner: React.FC = () => {
       primaryBtnAction: () => {
         setSelectedCategorySlug('graphics-cards');
         setCurrentPage('shop');
+        scrollToTop();
       },
       secondaryBtnText: 'Estimate Game FPS',
-      secondaryBtnAction: () => setCurrentPage('fps-estimator'),
+      secondaryBtnAction: () => {
+        setCurrentPage('fps-estimator');
+        scrollToTop();
+      },
       image:
         'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1200&q=80',
       specsTag: 'RTX 4060 to RTX 5090 • Best PKR Rates',
@@ -50,9 +59,15 @@ export const HeroBanner: React.FC = () => {
       subtitle:
         'From 1080p budget esports machines to high-end 4K liquid-cooled rigs. Fully assembled, cable-managed, and benchmarked by expert engineers.',
       primaryBtnText: 'View Prebuilt Builds',
-      primaryBtnAction: () => setCurrentPage('community-builds'),
+      primaryBtnAction: () => {
+        setCurrentPage('community-builds');
+        scrollToTop();
+      },
       secondaryBtnText: 'Build From Scratch',
-      secondaryBtnAction: () => setCurrentPage('pc-builder'),
+      secondaryBtnAction: () => {
+        setCurrentPage('pc-builder');
+        scrollToTop();
+      },
       image:
         'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
       specsTag: '100% Stress-Tested • Ready to Game',

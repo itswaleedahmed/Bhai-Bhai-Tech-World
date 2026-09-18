@@ -24,6 +24,7 @@ import {
   LogIn,
   LogOut,
   Truck,
+  HelpCircle,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useParticles } from './ParticleBurst';
@@ -32,6 +33,7 @@ import { formatPKR } from '../utils/currency';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl } from '../utils/whatsapp';
 import { BrowseCategoriesDrawer } from './BrowseCategoriesDrawer';
 import { BrandLogo } from './BrandLogo';
+import { scrollToTop } from '../utils/scroll';
 
 export const Header: React.FC = () => {
   const {
@@ -67,12 +69,16 @@ export const Header: React.FC = () => {
   const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
   const [isCategoriesDrawerOpen, setIsCategoriesDrawerOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const infoDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close search dropdown on click outside
+  // Close search & info dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setIsSearchFocused(false);
+      }
+      if (infoDropdownRef.current && !infoDropdownRef.current.contains(e.target as Node)) {
+        setIsInfoDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -101,6 +107,7 @@ export const Header: React.FC = () => {
   const handleLogoClick = () => {
     setSelectedCategorySlug(null);
     setCurrentPage('home');
+    scrollToTop();
   };
 
   const navItems = [
@@ -138,10 +145,9 @@ export const Header: React.FC = () => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     setIsSearchFocused(false);
-                    if (currentPage !== 'shop') {
-                      setSelectedCategorySlug(null);
-                      setCurrentPage('shop');
-                    }
+                    setSelectedCategorySlug(null);
+                    setCurrentPage('shop');
+                    scrollToTop();
                   }
                 }}
                 placeholder="Search GPUs, Ryzen 9800X3D, RTX 5070, RAM, monitors..."
@@ -356,6 +362,22 @@ export const Header: React.FC = () => {
               </button>
             )}
 
+            {/* Quick Support Shortcut in Header */}
+            <button
+              id="btn-header-quick-support"
+              type="button"
+              onClick={() => {
+                setSelectedCategorySlug(null);
+                setCurrentPage('faq');
+                scrollToTop();
+              }}
+              className="hidden xl:flex items-center gap-1.5 bg-[#16171B] hover:bg-white/10 text-zinc-300 hover:text-white px-3 py-2 rounded-lg border border-white/10 hover:border-[#25D366]/40 transition-all text-xs font-semibold shrink-0 cursor-pointer"
+              title="Customer Support, FAQs, Warranty & Store Policies"
+            >
+              <HelpCircle className="w-4 h-4 text-[#25D366]" />
+              <span>Support</span>
+            </button>
+
             {/* WhatsApp Direct CTA */}
             <a
               href={getWhatsAppGeneralUrl()}
@@ -378,8 +400,8 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Secondary navigation bar */}
-        <nav className="hidden md:flex items-center justify-between border-t border-white/5 py-2 text-xs font-semibold gap-2 lg:gap-3 w-full overflow-x-auto no-scrollbar scroll-smooth">
-          <div className="flex items-center gap-1.5 lg:gap-3 shrink-0 flex-nowrap">
+        <nav className="hidden md:flex items-center justify-between border-t border-white/5 py-2 text-xs font-semibold gap-2 lg:gap-3 w-full relative overflow-visible">
+          <div className="flex items-center gap-1.5 lg:gap-2.5 shrink-0 flex-nowrap">
             {/* Prominent Browse All Categories Button */}
             <button
               onClick={() => setIsCategoriesDrawerOpen(true)}
@@ -399,6 +421,7 @@ export const Header: React.FC = () => {
                   onClick={() => {
                     setSelectedCategorySlug(null);
                     setCurrentPage(item.page);
+                    scrollToTop();
                   }}
                   className={`flex items-center gap-1.5 transition-colors py-1 px-1.5 rounded-md relative whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
@@ -430,99 +453,155 @@ export const Header: React.FC = () => {
               </span>
             </button>
 
-            {/* More / Store & Trust Dropdown */}
-            <div className="relative">
+            {/* More / Store & Support Dropdown - High Visibility */}
+            <div ref={infoDropdownRef} className="relative shrink-0">
               <button
+                id="btn-header-more-support"
+                type="button"
                 onClick={() => setIsInfoDropdownOpen(!isInfoDropdownOpen)}
-                className="flex items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-colors py-1 px-1.5 rounded-md hover:bg-white/5 cursor-pointer"
+                className={`flex items-center gap-1.5 py-1 px-2.5 rounded-lg border transition-all cursor-pointer select-none ${
+                  isInfoDropdownOpen
+                    ? 'bg-[#25D366]/20 border-[#25D366]/60 text-white shadow-[0_0_12px_rgba(37,211,102,0.3)]'
+                    : 'bg-[#16171B] hover:bg-white/10 border-white/10 text-zinc-200 hover:text-white hover:border-[#25D366]/40'
+                }`}
+                title="Store Information, Showroom, Warranty, Courier Tracking & Support"
+                aria-expanded={isInfoDropdownOpen}
               >
-                <span>More & Support</span>
-                <ChevronDown className="w-3 h-3" />
+                <HelpCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                <span className="font-bold">More & Support</span>
+                <ChevronDown
+                  className={`w-3 h-3 text-zinc-400 transition-transform duration-200 ${
+                    isInfoDropdownOpen ? 'rotate-180 text-[#25D366]' : ''
+                  }`}
+                />
               </button>
 
               {isInfoDropdownOpen && (
                 <div
-                  onMouseLeave={() => setIsInfoDropdownOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-56 bg-[#16171B] border border-white/10 rounded-xl shadow-2xl py-2 z-50 divide-y divide-white/5"
+                  className="absolute top-full left-0 mt-1.5 w-64 bg-[#121316] border border-[#25D366]/40 rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.95),0_0_20px_rgba(37,211,102,0.2)] py-2 z-50 divide-y divide-white/10 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150"
                 >
+                  <div className="px-3.5 py-1.5 flex items-center justify-between text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                    <span>Help & Store Info</span>
+                    <span className="text-[#25D366]">Sheikhupura</span>
+                  </div>
+
                   <div className="py-1">
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('store-locator');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                      className="w-full text-left px-3.5 py-2 text-xs text-zinc-200 hover:bg-[#25D366]/10 hover:text-white flex items-center gap-2.5 transition-colors group cursor-pointer"
                     >
-                      <MapPin className="w-3.5 h-3.5 text-[#25D366]" />
-                      <span>Sheikhupura Showroom</span>
+                      <MapPin className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform shrink-0" />
+                      <div>
+                        <div className="font-semibold text-white">Sheikhupura Showroom</div>
+                        <div className="text-[10px] text-zinc-400">Shop #83 Stadium Park • In-person visits</div>
+                      </div>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('services');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                      className="w-full text-left px-3.5 py-2 text-xs text-zinc-200 hover:bg-[#25D366]/10 hover:text-white flex items-center gap-2.5 transition-colors group cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#25D366]" />
-                      <span>Services & Assembly</span>
+                      <Sparkles className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform shrink-0" />
+                      <div>
+                        <div className="font-semibold text-white">Services & Custom Assembly</div>
+                        <div className="text-[10px] text-zinc-400">Diagnostics, BIOS flash, thermals & testing</div>
+                      </div>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('my-account');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs text-zinc-200 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2"
+                      className="w-full text-left px-3.5 py-2 text-xs text-zinc-200 hover:bg-[#25D366]/10 hover:text-white flex items-center gap-2.5 transition-colors group cursor-pointer"
                     >
-                      <PackageCheck className="w-3.5 h-3.5 text-[#25D366]" />
-                      <span>Track Courier Order</span>
+                      <Truck className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform shrink-0" />
+                      <div>
+                        <div className="font-semibold text-white">Track Courier Order</div>
+                        <div className="text-[10px] text-zinc-400">Live TCS / Leopard / Daewoo status</div>
+                      </div>
                     </button>
                   </div>
+
                   <div className="py-1">
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('warranty-policy');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      Warranty & 7-Day Check
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Warranty & 7-Day Check Policy</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('faq');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      Delivery & FAQ
+                      <HelpCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Delivery Timelines & FAQs</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('return-policy');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      Return & Refund
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Returns & Refunds Terms</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('complaints');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      Complaints Cell
+                      <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>Complaints & Escalation Cell</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentPage('about');
                         setIsInfoDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366]"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-zinc-300 hover:bg-white/5 hover:text-[#25D366] flex items-center gap-2 transition-colors cursor-pointer"
                     >
-                      About Us
+                      <BrandLogo size="sm" showTagline={false} showWordmark={false} />
+                      <span>About Bhai Bhai Tech World</span>
                     </button>
+                  </div>
+
+                  {/* Direct WhatsApp Callout in Dropdown */}
+                  <div className="p-2 bg-black/40">
+                    <a
+                      href={getWhatsAppGeneralUrl('need customer support assistance')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-1.5 px-2.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] hover:text-white text-[11px] font-bold flex items-center justify-between transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Phone className="w-3 h-3 fill-current" />
+                        <span>Live WhatsApp Support</span>
+                      </span>
+                      <span className="text-[9px] font-mono text-emerald-400">2 min response</span>
+                    </a>
                   </div>
                 </div>
               )}
@@ -734,6 +813,7 @@ export const Header: React.FC = () => {
                     setSelectedCategorySlug(null);
                     setCurrentPage(item.page);
                     setIsMobileMenuOpen(false);
+                    scrollToTop();
                   }}
                   className="flex items-center gap-2 p-2.5 rounded-lg bg-[#16171B] text-zinc-200 text-xs font-semibold"
                 >
@@ -774,52 +854,109 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
-          <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
-            <button
-              onClick={() => {
-                setCurrentPage('about');
-                setIsMobileMenuOpen(false);
-              }}
-              className="hover:text-[#25D366]"
-            >
-              About
-            </button>
-            <button
-              onClick={() => {
-                setCurrentPage('faq');
-                setIsMobileMenuOpen(false);
-              }}
-              className="hover:text-[#25D366]"
-            >
-              FAQ
-            </button>
-            <button
-              onClick={() => {
-                setCurrentPage('warranty-policy');
-                setIsMobileMenuOpen(false);
-              }}
-              className="hover:text-[#25D366]"
-            >
-              Warranty
-            </button>
-            <button
-              onClick={() => {
-                setCurrentPage('return-policy');
-                setIsMobileMenuOpen(false);
-              }}
-              className="hover:text-[#25D366]"
-            >
-              Returns
-            </button>
-            <button
-              onClick={() => {
-                setCurrentPage('complaints');
-                setIsMobileMenuOpen(false);
-              }}
-              className="hover:text-[#25D366]"
-            >
-              Complaints
-            </button>
+          {/* More & Support Options Section */}
+          <div className="bg-[#121316] border border-white/10 rounded-xl p-3 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wider">
+                <HelpCircle className="w-4 h-4 text-[#25D366]" />
+                <span>More & Support Options</span>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                Help Center
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('warranty-policy');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">7-Day Warranty</div>
+                  <div className="text-[9px] text-zinc-400">Check guarantee</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('faq');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <HelpCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">FAQs & Delivery</div>
+                  <div className="text-[9px] text-zinc-400">TCS delivery info</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('return-policy');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <RefreshCw className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">Return & Refund</div>
+                  <div className="text-[9px] text-zinc-400">Exchange terms</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('complaints');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">Complaints Cell</div>
+                  <div className="text-[9px] text-zinc-400">Escalations</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('store-locator');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <MapPin className="w-4 h-4 text-[#25D366] shrink-0" />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">Showroom Map</div>
+                  <div className="text-[9px] text-zinc-400">Sheikhupura store</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPage('about');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg bg-black/40 hover:bg-white/5 border border-white/5 text-zinc-300 hover:text-white transition-colors text-left"
+              >
+                <BrandLogo size="sm" showTagline={false} showWordmark={false} />
+                <div>
+                  <div className="font-semibold text-white text-[11px]">About Us</div>
+                  <div className="text-[9px] text-zinc-400">Authentic HQ</div>
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#16171B] border border-white/10 text-xs">

@@ -3,9 +3,17 @@ import { Phone, Mail, MapPin, ShieldCheck, Truck, Clock, MessageSquare, ArrowRig
 import { useApp } from '../context/AppContext';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl } from '../utils/whatsapp';
 import { BrandLogo } from './BrandLogo';
+import { scrollToTop } from '../utils/scroll';
+import { NavigationPage } from '../context/AppContext';
 
 export const Footer: React.FC = () => {
   const { setCurrentPage, setSelectedCategorySlug } = useApp();
+
+  const handleNavigate = (page: NavigationPage, categorySlug: string | null = null) => {
+    setSelectedCategorySlug(categorySlug);
+    setCurrentPage(page);
+    scrollToTop();
+  };
 
   return (
     <footer className="bg-[#08090B] border-t border-white/10 text-zinc-400 text-xs">
@@ -71,10 +79,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => {
-                    setSelectedCategorySlug('graphics-cards');
-                    setCurrentPage('shop');
-                  }}
+                  onClick={() => handleNavigate('shop', 'graphics-cards')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Graphics Cards (RTX & Radeon)
@@ -82,10 +87,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setSelectedCategorySlug('processors');
-                    setCurrentPage('shop');
-                  }}
+                  onClick={() => handleNavigate('shop', 'processors')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Processors (AMD & Intel)
@@ -93,10 +95,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setSelectedCategorySlug('motherboards');
-                    setCurrentPage('shop');
-                  }}
+                  onClick={() => handleNavigate('shop', 'motherboards')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Motherboards (AM5 / Intel)
@@ -104,10 +103,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setSelectedCategorySlug('monitors');
-                    setCurrentPage('shop');
-                  }}
+                  onClick={() => handleNavigate('shop', 'monitors')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Gaming Displays (144Hz - 360Hz)
@@ -115,10 +111,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => {
-                    setSelectedCategorySlug('storage');
-                    setCurrentPage('shop');
-                  }}
+                  onClick={() => handleNavigate('shop', 'storage')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   NVMe Gen4 SSDs & Storage
@@ -135,7 +128,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => setCurrentPage('pc-builder')}
+                  onClick={() => handleNavigate('pc-builder')}
                   className="text-emerald-400 hover:text-white font-semibold transition-colors flex items-center gap-1"
                 >
                   <span>Custom PC Builder</span>
@@ -144,7 +137,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('fps-estimator')}
+                  onClick={() => handleNavigate('fps-estimator')}
                   className="text-emerald-400 hover:text-white font-semibold transition-colors flex items-center gap-1"
                 >
                   <span>FPS Game Estimator</span>
@@ -153,7 +146,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('community-builds')}
+                  onClick={() => handleNavigate('community-builds')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Featured Prebuilt Rigs
@@ -161,7 +154,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('services')}
+                  onClick={() => handleNavigate('services')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   PC Assembly & Thermal Repasting
@@ -169,7 +162,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('my-account')}
+                  onClick={() => handleNavigate('my-account')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Track Nationwide TCS Order
@@ -186,7 +179,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => setCurrentPage('warranty-policy')}
+                  onClick={() => handleNavigate('warranty-policy')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   7-Day Check Warranty Policy
@@ -194,7 +187,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('faq')}
+                  onClick={() => handleNavigate('faq')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Delivery Times & TCS FAQ
@@ -202,7 +195,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('store-locator')}
+                  onClick={() => handleNavigate('store-locator')}
                   className="text-[#25D366] hover:underline font-bold transition-colors flex items-center gap-1"
                 >
                   <MapPin className="w-3.5 h-3.5" />
@@ -211,7 +204,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('about')}
+                  onClick={() => handleNavigate('about')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   About Bhai Bhai Tech World
@@ -219,7 +212,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => setCurrentPage('complaints')}
+                  onClick={() => handleNavigate('complaints')}
                   className="hover:text-[#25D366] transition-colors"
                 >
                   Customer Complaints Cell
@@ -238,7 +231,7 @@ export const Footer: React.FC = () => {
             <p>© {new Date().getFullYear()} Bhai Bhai Tech World. All rights reserved.</p>
             {/* Discreet Staff Portal Entrance */}
             <button
-              onClick={() => setCurrentPage('admin')}
+              onClick={() => handleNavigate('admin')}
               className="opacity-15 hover:opacity-80 transition-opacity p-0.5 text-zinc-600 hover:text-[#25D366] cursor-pointer"
               title="Staff Desk"
               aria-label="Staff Desk"

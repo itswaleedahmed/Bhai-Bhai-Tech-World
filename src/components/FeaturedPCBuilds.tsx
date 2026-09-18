@@ -5,6 +5,7 @@ import { COMMUNITY_BUILDS } from '../data/communityBuilds';
 import { formatPKR } from '../utils/currency';
 import { useApp } from '../context/AppContext';
 import { getWhatsAppBuildUrl } from '../utils/whatsapp';
+import { scrollToTop } from '../utils/scroll';
 
 type ResolutionTier = '1080p' | '1440p' | '4K';
 
@@ -107,6 +108,7 @@ export const FeaturedPCBuilds: React.FC = () => {
 
   const handleCustomize = (build: typeof COMMUNITY_BUILDS[0]) => {
     loadPresetBuild(build.components);
+    scrollToTop();
   };
 
   const handleSetResolution = (buildId: string, res: ResolutionTier, e: React.MouseEvent) => {
@@ -415,7 +417,10 @@ export const FeaturedPCBuilds: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setCurrentPage('pc-builder')}
+              onClick={() => {
+                setCurrentPage('pc-builder');
+                scrollToTop();
+              }}
               className="py-2.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd59] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] cursor-pointer"
             >
               Launch PC Builder

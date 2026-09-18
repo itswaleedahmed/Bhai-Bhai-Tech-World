@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { CATEGORIES } from '../data/categories';
 import { useApp } from '../context/AppContext';
+import { scrollToTop } from '../utils/scroll';
 
 // Map string icon names to Lucide icons
 const ICON_MAP: Record<string, any> = {
@@ -89,6 +90,7 @@ export const BrowseCategoriesDrawer: React.FC<BrowseCategoriesDrawerProps> = ({
   const handleSelect = (slug: string) => {
     setSelectedCategorySlug(slug);
     setCurrentPage('shop');
+    scrollToTop();
     onClose();
   };
 

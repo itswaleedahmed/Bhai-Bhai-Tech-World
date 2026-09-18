@@ -15,9 +15,15 @@ import { ProductCard } from '../components/ProductCard';
 import { ProductSkeletonGrid } from '../components/ProductSkeletonCard';
 import { useApp } from '../context/AppContext';
 import { formatPKR } from '../utils/currency';
+import { scrollToTop } from '../utils/scroll';
 
 export const ShopCatalogView: React.FC = () => {
   const { products, selectedCategorySlug, setSelectedCategorySlug, searchQuery, setSearchQuery } = useApp();
+
+  // Ensure view always opens at the top
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);

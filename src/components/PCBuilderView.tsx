@@ -34,8 +34,15 @@ import { triggerConfetti, triggerBuildCelebration } from '../utils/confetti';
 import { PowerWattageRadialGauge } from './PowerWattageRadialGauge';
 import { QuotationModal } from './QuotationModal';
 import { ShareBuildModal } from './ShareBuildModal';
+import { StressTestSimulator } from './StressTestSimulator';
+import { BuildShowcase } from './BuildShowcase';
+import { scrollToTop } from '../utils/scroll';
 
 export const PCBuilderView: React.FC = () => {
+  // Ensure view always opens at the top
+  useEffect(() => {
+    scrollToTop();
+  }, []);
   const {
     activeBuild,
     setBuildComponent,
@@ -620,6 +627,18 @@ export const PCBuilderView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Component Stress-Test Simulator (Calculated Thermal Load & Rail Power in Watts) */}
+      <StressTestSimulator activeBuild={activeBuild} />
+
+      {/* Community-Focused Build Showcase (Top-Rated Configurations with 'Copy to Builder') */}
+      <BuildShowcase
+        onBuildCopied={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        title="Top-Rated Customer Configurations"
+        subtitle="Need inspiration? Copy any verified customer rig directly to this workbench with 1 click."
+      />
 
       {/* Finished Custom Build Celebration Modal */}
       {showCelebrationModal && (

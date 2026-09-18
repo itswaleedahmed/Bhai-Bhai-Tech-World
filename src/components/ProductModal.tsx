@@ -23,6 +23,8 @@ import { formatPKR } from '../utils/currency';
 import { useApp } from '../context/AppContext';
 import { useParticles } from './ParticleBurst';
 import { getWhatsAppProductUrl, getWhatsAppShareProductUrl } from '../utils/whatsapp';
+import { PriceHistoryChart } from './PriceHistoryChart';
+import { scrollToTop } from '../utils/scroll';
 
 interface ProductModalProps {
   product: Product | null;
@@ -81,7 +83,15 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
     }
 
     setCopied(true);
-    showToast(`Copied product link to clipboard!`);
+    showToast({
+      id: `copy-${product.id}-${Date.now()}`,
+      type: 'copy-success',
+      title: 'Product Link Copied!',
+      productName: product.name,
+      message: 'Shareable link copied to clipboard. Ready to paste on WhatsApp, Discord, or Socials!',
+      copiedUrl: uniqueUrl,
+      duration: 4500,
+    });
     setTimeout(() => setCopied(false), 2500);
   };
 
@@ -380,6 +390,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
                     onClick={() => {
                       onClose();
                       setCurrentPage('fps-estimator');
+                      scrollToTop();
                     }}
                     className="flex items-center gap-1.5 text-emerald-400 hover:underline"
                   >
@@ -410,6 +421,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 30-Day Market Price History Chart (Recharts) */}
+        <div className="px-6 pb-6 bg-[#0e1014] border-t border-white/10">
+          <PriceHistoryChart product={product} />
         </div>
       </div>
     </div>

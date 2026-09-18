@@ -20,7 +20,7 @@ import { formatPKR } from '../utils/currency';
 import { getWhatsAppProductUrl, getWhatsAppShareProductUrl, WHATSAPP_DISPLAY } from '../utils/whatsapp';
 
 export const QuickViewModal: React.FC = () => {
-  const { quickViewProduct, closeQuickView, addToCart, openProductModal } = useApp();
+  const { quickViewProduct, closeQuickView, addToCart, openProductModal, showToast } = useApp();
   const { triggerFeedback } = useParticles();
   const [quantity, setQuantity] = useState(1);
   const [copied, setCopied] = useState(false);
@@ -53,6 +53,15 @@ export const QuickViewModal: React.FC = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      showToast({
+        id: `copy-${product.id}-${Date.now()}`,
+        type: 'copy-success',
+        title: 'Product Link Copied!',
+        productName: product.name,
+        message: 'Shareable link copied to clipboard. Ready to paste anywhere!',
+        copiedUrl: shareUrl,
+        duration: 4500,
+      });
       setTimeout(() => setCopied(false), 2500);
     }
   };

@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, SUPER_ADMIN_EMAIL, handleFirestoreError, OperationType } from '../lib/firebase';
 import { InventoryService } from '../services/inventoryService';
 import { authService } from '../services/authService';
+import { scrollToTop } from '../utils/scroll';
 import {
   Product,
   CartItem,
@@ -17,6 +18,7 @@ import {
   TradeInSubmission,
   StoreConfig,
   UserProfile,
+  ToastNotification,
 } from '../types';
 import { PRODUCTS } from '../data/products';
 import { COMPONENTS } from '../data/components';
@@ -143,8 +145,9 @@ interface AppContextType {
   }) => Complaint;
 
   // Toast notifications
-  toast: string | null;
-  showToast: (message: string) => void;
+  toast: ToastNotification | string | null;
+  showToast: (notification: string | ToastNotification) => void;
+  clearToast: () => void;
 
   // Sound effects toggle
   isSoundEnabled: boolean;
@@ -213,7 +216,12 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentPage, setCurrentPage] = useState<NavigationPage>('home');
+  const [currentPage, setCurrentPageState] = useState<NavigationPage>('home');
+
+  const setCurrentPage = useCallback((pageOrUpdater: NavigationPage | ((prev: NavigationPage) => NavigationPage)) => {
+    setCurrentPageState(pageOrUpdater);
+    scrollToTop();
+  }, []);
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -396,13 +404,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   ]);
 
   // Toast
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastNotification | string | null>(null);
 
-  const showToast = (message: string) => {
-    setToast(message);
+  const showToast = (notification: string | ToastNotification) => {
+    let item: ToastNotification;
+    if (typeof notification === 'string') {
+      item = {
+        id: `toast-${Date.now()}-${Math.random()}`,
+        message: notification,
+        type: 'info',
+        duration: 3500,
+      };
+    } else {
+      item = {
+        id: notification.id || `toast-${Date.now()}-${Math.random()}`,
+        duration: notification.duration || (notification.type === 'copy-success' ? 4500 : 3500),
+        ...notification,
+      };
+    }
+
+    setToast(item);
+    const duration = item.duration || 3500;
     setTimeout(() => {
-      setToast((prev) => (prev === message ? null : prev));
-    }, 3500);
+      setToast((curr) => {
+        if (typeof curr === 'object' && curr !== null && curr.id === item.id) {
+          return null;
+        }
+        return curr;
+      });
+    }, duration);
+  };
+
+  const clearToast = () => {
+    setToast(null);
   };
 
   // Firebase Authentication & User State Synchronization
@@ -1145,6 +1179,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         submitComplaint,
         toast,
         showToast,
+        clearToast,
         isSoundEnabled,
         toggleSound,
         fpsPreselect,

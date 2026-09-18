@@ -87,6 +87,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Connection Health Verification Path
+    match /test/{testId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Live Store Inventory & Real-time Products Management
     function isValidProduct(data) {
       return data.id is string && data.id.size() <= 128 &&

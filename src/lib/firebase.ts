@@ -1,12 +1,16 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  getDocFromServer,
+} from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase App
-export const app = initializeApp(firebaseConfig);
+export const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-// Initialize Firestore with specific databaseId as instructed in Firebase guidelines
+// Initialize Firestore with specific databaseId as specified by Firebase skill guidelines
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 // Initialize Authentication
@@ -68,18 +72,20 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Initial connection test
+// Initial connection test as required by Firebase integration guidelines
 export async function testFirestoreConnection(): Promise<void> {
   try {
-    await getDocFromServer(doc(db, 'storeConfig', 'connection'));
+    await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error('Please check your Firebase configuration.');
+    if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable'))) {
+      console.info('Firestore client is operating in offline/cached mode until backend connection completes.');
     }
   }
 }
 
-// Execute non-blocking initial connection test
-testFirestoreConnection().catch((err) => {
-  console.warn('Initial Firestore ping:', err);
-});
+// Execute non-blocking initial connection test after network setup
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    testFirestoreConnection().catch(() => {});
+  }, 1200);
+}

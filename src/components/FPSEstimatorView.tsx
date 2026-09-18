@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Gauge,
   Zap,
@@ -24,6 +24,7 @@ import { formatPKR } from '../utils/currency';
 import { getWhatsAppGeneralUrl } from '../utils/whatsapp';
 import { Product } from '../types';
 import { UpgradeRigWizard } from './UpgradeRigWizard';
+import { scrollToTop } from '../utils/scroll';
 
 export interface FpsPreset {
   id: string;
@@ -196,6 +197,11 @@ const FPS_PRESETS: FpsPreset[] = [
 
 export const FPSEstimatorView: React.FC = () => {
   const { fpsPreselect, setFpsPreselect, setCurrentPage, openTradeIn, setBuildComponent } = useApp();
+
+  // Ensure view always opens at the top
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   // Top view tab: 'estimator' or 'upgrade-wizard'
   const [activeTab, setActiveTab] = useState<'estimator' | 'upgrade-wizard'>('estimator');

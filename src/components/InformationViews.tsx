@@ -27,11 +27,13 @@ import {
   X,
   LogIn,
   LogOut,
+  RefreshCw,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { WHATSAPP_DISPLAY, getWhatsAppGeneralUrl, getWhatsAppOrderTrackingUrl, getWhatsAppStorePickupUrl } from '../utils/whatsapp';
 import { formatPKR } from '../utils/currency';
 import { StoreLocatorLahore } from './StoreLocatorLahore';
+import { scrollToTop } from '../utils/scroll';
 
 interface InfoViewProps {
   section: 'about' | 'faq' | 'warranty-policy' | 'complaints' | 'my-account' | 'store-locator';
@@ -126,6 +128,80 @@ export const InformationViews: React.FC<InfoViewProps> = ({ section }) => {
 
   return (
     <div className="py-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Universal Support & Information Hub Navigation Bar */}
+      <div className="mb-8 bg-[#121316] border border-white/10 rounded-2xl p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-[#25D366]" />
+            <div>
+              <h2 className="text-sm sm:text-base font-display font-black text-white uppercase tracking-wide">
+                Help & Support Center
+              </h2>
+              <p className="text-[11px] text-zinc-400">
+                Official store policies, showroom directions, order tracking & customer support
+              </p>
+            </div>
+          </div>
+          <a
+            href={getWhatsAppGeneralUrl('need help from Support Hub')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] text-xs font-bold transition-all shrink-0 cursor-pointer"
+          >
+            <Phone className="w-3.5 h-3.5 fill-current" />
+            <span>WhatsApp Support</span>
+          </a>
+        </div>
+
+        {/* Support Options Horizontal Tabs */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-3">
+          {[
+            { id: 'store-locator', label: 'Showroom', icon: MapPin, desc: 'Sheikhupura' },
+            { id: 'my-account', label: 'Track Order', icon: Truck, desc: 'Courier Status' },
+            { id: 'warranty-policy', label: '7-Day Warranty', icon: ShieldCheck, desc: 'Check Guarantee' },
+            { id: 'faq', label: 'FAQs & Delivery', icon: HelpCircle, desc: 'TCS & Shipping' },
+            { id: 'complaints', label: 'Complaints', icon: AlertOctagon, desc: 'Escalations' },
+            { id: 'about', label: 'About Us', icon: Store, desc: 'Authentic HQ' },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = section === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setCurrentPage(tab.id as any);
+                  scrollToTop();
+                }}
+                className={`flex flex-col items-start p-2.5 rounded-xl border transition-all text-left cursor-pointer group ${
+                  isActive
+                    ? 'bg-[#25D366]/15 border-[#25D366] shadow-[0_0_15px_rgba(37,211,102,0.25)]'
+                    : 'bg-black/30 border-white/5 hover:border-white/20 hover:bg-white/5'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <Icon
+                    className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                      isActive ? 'text-[#25D366]' : 'text-zinc-400'
+                    }`}
+                  />
+                  <span
+                    className={`text-xs font-bold truncate ${
+                      isActive ? 'text-white' : 'text-zinc-300'
+                    }`}
+                  >
+                    {tab.label}
+                  </span>
+                </div>
+                <span className="text-[10px] text-zinc-500 font-mono truncate w-full">
+                  {tab.desc}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* SECTION: STORE LOCATOR (DEDICATED VIEW) */}
       {section === 'store-locator' && (
         <StoreLocatorLahore />

@@ -87,3 +87,50 @@ export function playPopSound(): void {
   }
 }
 
+/**
+ * Plays a pleasant, subtle two-tone chime for copy success.
+ * Respects the global sound mute setting.
+ */
+export function playCopySuccessSound(): void {
+  if (!isSoundEnabled()) return;
+
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    const t = ctx.currentTime;
+
+    // Tone 1: 784 Hz (G5)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(784, t);
+    gain1.gain.setValueAtTime(0.0001, t);
+    gain1.gain.exponentialRampToValueAtTime(0.06, t + 0.015);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(t);
+    osc1.stop(t + 0.13);
+
+    // Tone 2: 1046.5 Hz (C6) - slightly delayed
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1046.5, t + 0.08);
+    gain2.gain.setValueAtTime(0.0001, t + 0.08);
+    gain2.gain.exponentialRampToValueAtTime(0.07, t + 0.095);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(t + 0.08);
+    osc2.stop(t + 0.26);
+  } catch {
+    // Graceful no-op
+  }
+}
+

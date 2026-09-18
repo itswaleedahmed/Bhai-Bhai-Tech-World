@@ -114,6 +114,10 @@
     "/storeConfig/{configId}": {
       "schema": "StoreConfig",
       "description": "Store operational settings, hotlines and timings"
+    },
+    "/test/{testId}": {
+      "schema": "StoreConfig",
+      "description": "Health check and connection verification documents"
     }
   }
 }

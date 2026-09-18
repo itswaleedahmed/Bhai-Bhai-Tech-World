@@ -11,6 +11,7 @@ import {
   Eye,
   Bell,
   Video,
+  Share2,
 } from 'lucide-react';
 import { Product } from '../types';
 import { useApp } from '../context/AppContext';
@@ -18,6 +19,7 @@ import { useParticles } from './ParticleBurst';
 import { Tilt3DCard } from './Tilt3DCard';
 import { formatPKR } from '../utils/currency';
 import { getWhatsAppProductUrl } from '../utils/whatsapp';
+import { scrollToTop } from '../utils/scroll';
 
 interface ProductCardProps {
   product: Product;
@@ -37,6 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     setCurrentPage,
     setFpsPreselect,
     openVideoInspection,
+    showToast,
   } = useApp();
   const { triggerFeedback } = useParticles();
 
@@ -48,6 +51,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     product.tier === 'High' ||
     product.tier === 'Enthusiast' ||
     product.categoryId === 'graphics-cards';
+
+  const handleQuickShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const shareUrl = `${origin}?product=${encodeURIComponent(product.id)}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    showToast({
+      id: `copy-${product.id}-${Date.now()}`,
+      type: 'copy-success',
+      title: 'Product Link Copied!',
+      productName: product.name,
+      message: 'Product link copied to clipboard. Ready to paste anywhere!',
+      copiedUrl: shareUrl,
+      duration: 4500,
+    });
+  };
 
   // Check if component qualifies for 3D perspective metallic tilt showcase
   const isFlagship =
@@ -85,6 +106,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       setFpsPreselect((prev) => ({ ...prev, gpuId: product.id }));
     }
     setCurrentPage('fps-estimator');
+    scrollToTop();
   };
 
   const isCpuOrGpu =
@@ -189,6 +211,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               title="Quick View specs"
             >
               <Eye className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Quick Share Link Button */}
+            <button
+              onClick={handleQuickShare}
+              className="p-1.5 rounded-md backdrop-blur-md bg-black/60 hover:bg-[#25D366] text-zinc-300 hover:text-black transition-colors"
+              title="Share / Copy product link"
+            >
+              <Share2 className="w-3.5 h-3.5" />
             </button>
           </div>
 

@@ -198,6 +198,23 @@ export interface Complaint {
   status: 'Pending' | 'Reviewing' | 'Resolved';
 }
 
+export interface ToastNotification {
+  id: string;
+  message: string;
+  title?: string;
+  type?: 'success' | 'copy-success' | 'info' | 'warning' | 'cart';
+  productName?: string;
+  copiedUrl?: string;
+  duration?: number;
+}
+
+export interface PriceHistoryPoint {
+  date: string;
+  price: number;
+  marketAverage: number;
+  eventLabel?: string;
+}
+
 export interface CommunityBuild {
   id: string;
   name: string;
@@ -210,6 +227,14 @@ export interface CommunityBuild {
   components: PCBuildSelection;
   image: string;
   featuredBadge?: string;
+  authorName?: string;
+  authorCity?: string;
+  rating?: number;
+  reviewsCount?: number;
+  upvotes?: number;
+  useCase?: string;
+  submittedAt?: string;
+  verifiedBuild?: boolean;
 }
 
 export interface Review {

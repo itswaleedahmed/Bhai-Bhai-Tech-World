@@ -207,32 +207,257 @@
   transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Subtle 'magnetic' snap animation effect on #btn-floating-whatsapp-link when entering a docking zone during drag */
+/* Increased visual intensity 'magnetic' snap animation effect with vivid color-shift on #btn-floating-whatsapp-link when entering a docking zone during drag */
 @keyframes magneticSnapFeedback {
   0% {
     transform: scale(0.92);
+    background-color: #25D366;
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.98), 0 0 35px rgba(37, 211, 102, 0.85);
   }
-  38% {
-    transform: scale(1.09);
-    box-shadow: 0 0 55px rgba(37, 211, 102, 1), 0 0 30px #ffffff, 0 20px 40px rgba(0, 0, 0, 0.9);
+  30% {
+    transform: scale(1.18);
+    background-color: #00FF87;
+    box-shadow: 0 0 75px rgba(0, 255, 135, 1), 0 0 40px #ffffff, 0 24px 50px rgba(0, 0, 0, 0.95);
+    filter: brightness(1.28) saturate(1.45);
   }
-  70% {
-    transform: scale(0.97);
-    box-shadow: 0 0 45px rgba(37, 211, 102, 0.95), 0 15px 35px rgba(0, 0, 0, 0.9);
+  60% {
+    transform: scale(0.96);
+    background-color: #38ef7d;
+    box-shadow: 0 0 58px rgba(56, 239, 125, 0.95), 0 16px 36px rgba(0, 0, 0, 0.9);
+    filter: brightness(1.18) saturate(1.3);
   }
   100% {
-    transform: scale(1.02);
-    box-shadow: 0 0 42px rgba(37, 211, 102, 0.92), 0 18px 38px rgba(0, 0, 0, 0.92);
+    transform: scale(1.06);
+    background-color: #10e865;
+    box-shadow: 0 0 50px rgba(16, 232, 101, 0.95), 0 0 20px rgba(255, 255, 255, 0.7), 0 20px 42px rgba(0, 0, 0, 0.92);
+    filter: brightness(1.12) saturate(1.2);
   }
 }
 
 #btn-floating-whatsapp-link.floating-btn-magnetic-snap,
 .floating-btn-magnetic-snap {
   animation: magneticSnapFeedback 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  outline: 3px solid rgba(255, 255, 255, 0.92);
+  outline: 3px solid rgba(255, 255, 255, 0.95);
   outline-offset: 3px;
   cursor: grabbing !important;
+}
+
+/* Dynamic momentum fling gliding state when releasing #btn-floating-whatsapp-link into snap zone */
+#btn-floating-whatsapp-link.floating-btn-fling-glide,
+.floating-btn-fling-glide {
+  transform: scale(1.025) !important;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.9), 0 0 45px rgba(37, 211, 102, 0.85) !important;
+  filter: brightness(1.18) saturate(1.25);
+  transition: transform var(--fling-duration, 380ms) cubic-bezier(0.19, 1, 0.22, 1), box-shadow var(--fling-duration, 380ms) cubic-bezier(0.19, 1, 0.22, 1) !important;
+}
+
+/* High-Precision Tactical Lab Chromatic Aberration for Boundary Distance Measurement */
+@keyframes tacticalChromaticPulse {
+  0% {
+    text-shadow:
+      -1px -0.4px 0 rgba(255, 30, 80, 0.85),
+      1px 0.4px 0 rgba(0, 245, 255, 0.9),
+      0 0 6px rgba(37, 211, 102, 0.5);
+  }
+  50% {
+    text-shadow:
+      -1.5px -0.6px 0 rgba(255, 30, 80, 0.95),
+      1.5px 0.6px 0 rgba(0, 245, 255, 0.95),
+      0 0 8px rgba(37, 211, 102, 0.7);
+  }
+  100% {
+    text-shadow:
+      -0.8px -0.3px 0 rgba(255, 30, 80, 0.8),
+      0.8px 0.3px 0 rgba(0, 245, 255, 0.85),
+      0 0 5px rgba(37, 211, 102, 0.45);
+  }
+}
+
+.tactical-chromatic-text {
+  animation: tacticalChromaticPulse 1.4s ease-in-out infinite alternate;
+  letter-spacing: 0.05em;
+  display: inline-block;
+}
+
+.tactical-chromatic-subtext {
+  text-shadow:
+    -0.6px -0.25px 0 rgba(255, 45, 85, 0.55),
+    0.6px 0.25px 0 rgba(0, 240, 255, 0.6);
+  display: inline-block;
+}
+
+/* Snap-Zone Radar Sweep & Pulse Animation */
+@keyframes radarSweepBeam {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes radarRingPulse {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+
+.snap-zone-radar-sweep {
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(37, 211, 102, 0.08) 320deg,
+    rgba(37, 211, 102, 0.4) 360deg
+  );
+  animation: radarSweepBeam 2.5s linear infinite;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.snap-zone-radar-sweep-active {
+  animation-duration: 1.1s;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 260deg,
+    rgba(37, 211, 102, 0.22) 310deg,
+    rgba(37, 211, 102, 0.75) 360deg
+  );
+}
+
+.snap-zone-radar-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid rgba(37, 211, 102, 0.65);
+  animation: radarRingPulse 2s cubic-bezier(0.2, 0.8, 0.25, 1) infinite;
+  pointer-events: none;
+}
+
+/* Outward Ring Pulse emitted when button enters a snap-zone */
+@keyframes snapZoneOutwardRingPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.95;
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.75);
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.36);
+    opacity: 0;
+    box-shadow: 0 0 28px 14px rgba(37, 211, 102, 0);
+  }
+}
+
+.snap-zone-outward-pulse {
+  position: absolute;
+  inset: -3px;
+  border-radius: 1.25rem;
+  border: 1.5px solid rgba(37, 211, 102, 0.85);
+  animation: snapZoneOutwardRingPulse 1.25s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.snap-zone-outward-pulse-delayed {
+  animation-delay: 0.42s;
+}
+
+/* Haptic-feedback micro-vibration animation simulating physical 'thud' effect on snap */
+@keyframes snapThudMicroVibration {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  15% {
+    transform: translate3d(-3.5px, 2px, 0) scale(0.96, 1.04);
+  }
+  30% {
+    transform: translate3d(3.5px, -2px, 0) scale(1.05, 0.95);
+  }
+  45% {
+    transform: translate3d(-2px, 1px, 0) scale(0.98, 1.02);
+  }
+  60% {
+    transform: translate3d(1.5px, -1px, 0) scale(1.01, 0.99);
+  }
+  75% {
+    transform: translate3d(-0.6px, 0.5px, 0) scale(0.995, 1.005);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.floating-btn-snap-thud {
+  animation: snapThudMicroVibration 0.28s cubic-bezier(0.25, 1, 0.5, 1) both !important;
+}
+
+/* One-time subtle wiggle animation on #btn-floating-whatsapp-link signaling it can be dragged */
+@keyframes initialDragWiggle {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  14% {
+    transform: translate3d(-7px, -2px, 0) rotate(-6deg) scale(1.05);
+    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.85);
+  }
+  28% {
+    transform: translate3d(7px, 2px, 0) rotate(6deg) scale(1.05);
+    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.85);
+  }
+  42% {
+    transform: translate3d(-5px, -1px, 0) rotate(-3.5deg) scale(1.03);
+  }
+  56% {
+    transform: translate3d(5px, 1px, 0) rotate(3.5deg) scale(1.03);
+  }
+  70% {
+    transform: translate3d(-2px, 0, 0) rotate(-1.5deg);
+  }
+  84% {
+    transform: translate3d(2px, 0, 0) rotate(1.5deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+#btn-floating-whatsapp-link.animate-drag-wiggle,
+.animate-drag-wiggle {
+  animation: initialDragWiggle 1.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+}
+
+/* Tactile Ripple Effect for Floating WhatsApp Pill */
+@keyframes pillRippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-ripple {
+  animation: pillRippleEffect 0.62s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Soft glow pulse effect to pill body upon completion of expansion animation to highlight interactivity */
@@ -250,6 +475,199 @@
 #btn-floating-whatsapp-link .animate-pill-body-glow,
 .animate-pill-body-glow {
   animation: pillBodyGlowPulse 1.8s ease-in-out infinite;
+}
+
+/* Glitch animation on motion trail particles at maximum drag velocity */
+@keyframes particleGlitchJitter {
+  0% {
+    transform: scale(var(--particle-scale, 1)) translate(0px, 0px) skewX(0deg);
+    filter: drop-shadow(3px 0 rgba(0, 245, 255, 0.95)) drop-shadow(-3px 0 rgba(255, 0, 110, 0.95));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  20% {
+    transform: scale(var(--particle-scale, 1)) translate(-3px, 2px) skewX(-10deg);
+    filter: drop-shadow(-4px 0 rgba(0, 245, 255, 1)) drop-shadow(4px 0 rgba(255, 0, 110, 1));
+    clip-path: polygon(0% 12%, 100% 8%, 100% 82%, 0% 88%);
+  }
+  40% {
+    transform: scale(var(--particle-scale, 1)) translate(3.5px, -2px) skewX(12deg);
+    filter: drop-shadow(3px -1px rgba(0, 245, 255, 0.9)) drop-shadow(-3px 1px rgba(255, 0, 110, 0.9));
+    clip-path: polygon(0% 4%, 100% 0%, 100% 68%, 0% 74%);
+  }
+  60% {
+    transform: scale(var(--particle-scale, 1)) translate(-2.5px, -1.5px) skewX(-6deg);
+    filter: drop-shadow(-3px 0 rgba(0, 245, 255, 0.95)) drop-shadow(3px 0 rgba(255, 0, 110, 0.95));
+    clip-path: polygon(0% 28%, 100% 22%, 100% 100%, 0% 94%);
+  }
+  80% {
+    transform: scale(var(--particle-scale, 1)) translate(2.5px, 2px) skewX(7deg);
+    filter: drop-shadow(2px 0 rgba(0, 245, 255, 0.9)) drop-shadow(-2px 0 rgba(255, 0, 110, 0.9));
+    clip-path: polygon(0% 0%, 100% 6%, 100% 92%, 0% 100%);
+  }
+  100% {
+    transform: scale(var(--particle-scale, 1)) translate(0px, 0px) skewX(0deg);
+    filter: drop-shadow(2px 0 rgba(0, 245, 255, 0.85)) drop-shadow(-2px 0 rgba(255, 0, 110, 0.85));
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+}
+
+.particle-glitch-active {
+  animation: particleGlitchJitter 0.11s steps(2, start) infinite !important;
+  mix-blend-mode: screen;
+}
+
+/* Magnetic snap highlight animation on connection line when button is within 20px of snap-zone */
+@keyframes magneticSnapLinePulse {
+  0% {
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 3px #00ff88) drop-shadow(0 0 10px rgba(0, 255, 136, 0.85));
+    stroke-width: 2.5px;
+  }
+  50% {
+    stroke-dashoffset: 14;
+    filter: drop-shadow(0 0 7px #00ffff) drop-shadow(0 0 20px rgba(0, 255, 255, 0.95));
+    stroke-width: 3.5px;
+  }
+  100% {
+    stroke-dashoffset: 28;
+    filter: drop-shadow(0 0 3px #00ff88) drop-shadow(0 0 10px rgba(0, 255, 136, 0.85));
+    stroke-width: 2.5px;
+  }
+}
+
+.connection-line-magnetized {
+  stroke: #00ff88 !important;
+  stroke-width: 2.5px !important;
+  stroke-opacity: 1 !important;
+  animation: magneticSnapLinePulse 0.5s ease-in-out infinite !important;
+}
+
+@keyframes magneticBeamPulse {
+  0% {
+    opacity: 0.45;
+    stroke-width: 4px;
+    stroke: rgba(0, 255, 136, 0.5);
+  }
+  50% {
+    opacity: 0.95;
+    stroke-width: 8px;
+    stroke: rgba(0, 255, 240, 0.8);
+  }
+  100% {
+    opacity: 0.45;
+    stroke-width: 4px;
+    stroke: rgba(0, 255, 136, 0.5);
+  }
+}
+
+.connection-beam-magnetized {
+  animation: magneticBeamPulse 0.5s ease-in-out infinite !important;
+}
+
+/* Visual Guide-line & Grid Projection from center of button to screen edges */
+@keyframes guideLineFlow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes guideLineFlowReverse {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 24;
+  }
+}
+
+.guide-line-animated {
+  animation: guideLineFlow 0.8s linear infinite;
+}
+
+.guide-line-animated-fast {
+  animation: guideLineFlow 0.4s linear infinite;
+}
+
+@keyframes snapSilhouettePulse {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(37, 211, 102, 0.4));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 18px rgba(37, 211, 102, 0.85)) drop-shadow(0 0 26px rgba(0, 255, 136, 0.6));
+  }
+}
+
+.snap-ghost-silhouette {
+  transform-origin: center;
+  animation: snapSilhouettePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes edgeBracketGlow {
+  0%, 100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 4px #25d366);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px #00ff88) drop-shadow(0 0 16px rgba(0, 255, 200, 0.8));
+  }
+}
+
+.edge-snap-dock-bracket {
+  animation: edgeBracketGlow 1.2s ease-in-out infinite;
+}
+
+/* Destination Silhouette Breathing 3D Scale Animation when within 40px of snap-zone */
+@keyframes snapSilhouetteBreathing3D {
+  0% {
+    transform: perspective(600px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg);
+    filter: drop-shadow(0 0 10px rgba(37, 211, 102, 0.8)) drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+  }
+  25% {
+    transform: perspective(600px) scale3d(1.18, 1.18, 1.35) rotateX(8deg) rotateY(-8deg);
+    filter: drop-shadow(0 0 26px rgba(0, 255, 136, 1)) drop-shadow(0 0 45px rgba(0, 245, 255, 0.9));
+  }
+  50% {
+    transform: perspective(600px) scale3d(1.26, 1.26, 1.5) rotateX(0deg) rotateY(0deg);
+    filter: drop-shadow(0 0 35px rgba(0, 255, 136, 1)) drop-shadow(0 0 60px rgba(37, 211, 102, 0.95));
+  }
+  75% {
+    transform: perspective(600px) scale3d(1.1, 1.1, 1.2) rotateX(-6deg) rotateY(6deg);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.85)) drop-shadow(0 0 35px rgba(0, 245, 255, 0.75));
+  }
+  100% {
+    transform: perspective(600px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg);
+    filter: drop-shadow(0 0 10px rgba(37, 211, 102, 0.8)) drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+  }
+}
+
+.snap-ghost-silhouette-breathing-3d {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: snapSilhouetteBreathing3D 0.95s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+}
+
+/* Tether Line Pulse for Idle State */
+@keyframes tetherLinePulse {
+  0%, 100% {
+    stroke-opacity: 0.6;
+    filter: drop-shadow(0 0 4px rgba(37, 211, 102, 0.5));
+  }
+  50% {
+    stroke-opacity: 0.95;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.9)) drop-shadow(0 0 16px rgba(0, 229, 255, 0.6));
+  }
+}
+
+.tether-line-pulse {
+  animation: tetherLinePulse 2s ease-in-out infinite;
 }
 
 /* Printable Quotation Styles for clean A4 printing */
