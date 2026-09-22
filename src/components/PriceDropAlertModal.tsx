@@ -87,7 +87,7 @@ export const PriceDropAlertModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
@@ -95,9 +95,9 @@ export const PriceDropAlertModal: React.FC = () => {
       />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-md bg-[#121316] border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 p-5 sm:p-6 my-auto animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md max-h-[92vh] flex flex-col bg-[#121316] border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 p-5 sm:p-6 my-auto animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+        <div className="flex items-center justify-between pb-3.5 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <Bell className="w-4 h-4" />
@@ -118,6 +118,7 @@ export const PriceDropAlertModal: React.FC = () => {
           </button>
         </div>
 
+        <div className="overflow-y-auto flex-1 custom-scrollbar">
         {/* Product preview snippet */}
         <div className="my-4 p-3 rounded-xl bg-[#16171B] border border-white/5 flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg bg-black/50 border border-white/10 p-1 flex items-center justify-center shrink-0">
@@ -297,6 +298,7 @@ export const PriceDropAlertModal: React.FC = () => {
             </div>
           </form>
         )}
+        </div>
       </div>
     </div>
   );

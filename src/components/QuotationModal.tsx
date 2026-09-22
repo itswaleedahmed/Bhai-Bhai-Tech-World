@@ -186,12 +186,12 @@ export const QuotationModal: React.FC<{
   )}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       <div className="fixed inset-0 bg-black/85 backdrop-blur-md no-print" onClick={onClose} />
 
-      <div className="relative w-full max-w-4xl bg-[#121316] border border-white/20 rounded-2xl shadow-[0_0_80px_rgba(0,0,0,0.95)] overflow-hidden z-10 my-8">
+      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col bg-[#121316] border border-white/20 rounded-2xl shadow-[0_0_80px_rgba(0,0,0,0.95)] overflow-hidden z-10 my-auto animate-in zoom-in-95 duration-200">
         {/* Top Floating Control Bar (Hidden when printing) */}
-        <div className="no-print p-4 bg-[#18191E] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+        <div className="no-print p-4 bg-[#18191E] border-b border-white/10 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2 text-white">
             <FileText className="w-5 h-5 text-[#25D366]" />
             <span className="font-display font-black text-sm uppercase tracking-wider">
@@ -236,7 +236,7 @@ export const QuotationModal: React.FC<{
         </div>
 
         {/* Printable Area - Formatted like a real high-standard hardware invoice / quotation */}
-        <div id="quotation-printable-area" className="p-6 sm:p-10 bg-white text-black text-left">
+        <div id="quotation-printable-area" className="p-6 sm:p-10 bg-white text-black text-left flex-1 overflow-y-auto custom-scrollbar">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b-2 border-zinc-800">
             <div>

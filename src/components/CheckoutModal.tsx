@@ -59,7 +59,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/85 backdrop-blur-md transition-opacity"
@@ -67,14 +67,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden z-10 p-6 sm:p-8 my-8">
+      <div className="relative w-full max-w-2xl max-h-[92vh] flex flex-col bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9)] overflow-hidden z-10 my-auto animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors z-20 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
+        <div className="overflow-y-auto p-6 sm:p-8 flex-1">
         {!isSuccess ? (
           <div>
             <div className="mb-6">
@@ -325,6 +326,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

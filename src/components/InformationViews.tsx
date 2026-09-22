@@ -1285,12 +1285,12 @@ export const InformationViews: React.FC<InfoViewProps> = ({ section }) => {
 
       {/* Lahore Store Locator & Pickup Modal */}
       {showLocatorModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div
             className="fixed inset-0 bg-black/85 backdrop-blur-md"
             onClick={() => setShowLocatorModal(false)}
           />
-          <div className="relative w-full max-w-5xl bg-[#0F1014] border border-[#25D366]/40 rounded-2xl shadow-2xl p-6 sm:p-8 z-10 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <div className="relative w-full max-w-5xl bg-[#0F1014] border border-[#25D366]/40 rounded-2xl shadow-2xl p-6 sm:p-8 z-10 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
                 <Store className="w-5 h-5 text-[#25D366]" />

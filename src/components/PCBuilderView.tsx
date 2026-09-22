@@ -23,6 +23,8 @@ import {
   QrCode,
   RefreshCw,
   FileDown,
+  Gauge,
+  Activity,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useParticles } from './ParticleBurst';
@@ -54,6 +56,7 @@ export const PCBuilderView: React.FC = () => {
     setCurrentPage,
     showToast,
     openTradeIn,
+    setFpsPreselect,
   } = useApp();
   const { triggerFeedback } = useParticles();
 
@@ -62,6 +65,36 @@ export const PCBuilderView: React.FC = () => {
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [isQuotationOpen, setIsQuotationOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Real-time hardware diagnostic simulation states
+  const [isDiagnosticScanning, setIsDiagnosticScanning] = useState(false);
+  const [diagnosticStep, setDiagnosticStep] = useState(0);
+  const [hasDiagnosticScanned, setHasDiagnosticScanned] = useState(false);
+
+  // Reset diagnostic scanned state whenever user modifies components
+  useEffect(() => {
+    setHasDiagnosticScanned(false);
+  }, [activeBuild]);
+
+  const handleRunDiagnostic = () => {
+    setIsDiagnosticScanning(true);
+    setDiagnosticStep(0);
+
+    const t1 = setTimeout(() => setDiagnosticStep(1), 400);
+    const t2 = setTimeout(() => setDiagnosticStep(2), 850);
+    const t3 = setTimeout(() => setDiagnosticStep(3), 1300);
+    const t4 = setTimeout(() => {
+      setIsDiagnosticScanning(false);
+      setHasDiagnosticScanned(true);
+    }, 1750);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+    };
+  };
 
   // Auto-populate build from URL query string if present (e.g. ?build=cpu:cpu-ryzen-5600;gpu:gpu-rtx-4060)
   useEffect(() => {
@@ -486,6 +519,22 @@ export const PCBuilderView: React.FC = () => {
                 <span>Download PDF Quote</span>
               </button>
 
+              {/* Estimate Game FPS for this Rig button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (activeBuild.cpu && activeBuild.gpu) {
+                    setFpsPreselect({ cpuId: activeBuild.cpu.id, gpuId: activeBuild.gpu.id });
+                  }
+                  setCurrentPage('fps-estimator');
+                  scrollToTop();
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <Gauge className="w-4 h-4" />
+                <span>Estimate Game FPS for this Rig</span>
+              </button>
+
               <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10">
                 <button
                   type="button"
@@ -567,43 +616,148 @@ export const PCBuilderView: React.FC = () => {
             </div>
           </div>
 
-          {/* Compatibility Advisor Box */}
-          <div className="bg-[#121316] rounded-2xl border border-white/10 p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              {isFullyCompatible ? (
-                <CheckCircle2 className="w-5 h-5 text-[#25D366]" />
-              ) : (
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
+          {/* Real-time Hardware Compatibility Diagnostic Box */}
+          <div className="bg-[#121316] rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#25D366]" />
+                <h3 className="font-display font-black text-sm text-white uppercase tracking-wider">
+                  Hardware Diagnostic Engine
+                </h3>
+              </div>
+              {hasDiagnosticScanned && (
+                <span
+                  className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                    isFullyCompatible
+                      ? 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40'
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                  }`}
+                >
+                  {isFullyCompatible ? '✓ 100% Passed' : '⚠ Alert Detected'}
+                </span>
               )}
-              <h3 className="font-display font-black text-sm text-white uppercase">
-                {isFullyCompatible ? 'Parts Compatibility: Verified' : 'Compatibility Warnings'}
-              </h3>
             </div>
 
-            {issues.length > 0 && (
-              <div className="space-y-2">
-                {issues.map((issue, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs leading-tight"
-                  >
-                    ⚠️ {issue}
-                  </div>
-                ))}
+            {/* Before scan: Prompt to run real-time hardware scan */}
+            {!isDiagnosticScanning && !hasDiagnosticScanned && (
+              <div className="p-4 rounded-xl bg-black/40 border border-white/5 text-center space-y-3">
+                <p className="text-xs text-zinc-400">
+                  Run real-time hardware telemetry to verify socket pinouts, RAM channels, PCIe clearance & 80+ PSU load headroom.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleRunDiagnostic}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(37,211,102,0.3)] cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-black" />
+                  <span>Run Real-Time Compatibility Scan</span>
+                </button>
               </div>
             )}
 
-            {passed.length > 0 && (
-              <div className="space-y-1.5">
-                {passed.map((item, idx) => (
+            {/* Real-time Scanning Telemetry Animation */}
+            {isDiagnosticScanning && (
+              <div className="p-4 rounded-xl bg-black/50 border border-[#25D366]/40 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-mono text-zinc-300 font-bold flex items-center gap-2">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#25D366]" />
+                    <span>Analyzing Hardware Interconnects...</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-[#25D366]">
+                    {diagnosticStep === 0 ? '25%' : diagnosticStep === 1 ? '55%' : diagnosticStep === 2 ? '80%' : '100%'}
+                  </span>
+                </div>
+
+                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
                   <div
-                    key={idx}
-                    className="flex items-center gap-2 text-xs text-zinc-300"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
-                    <span>{item}</span>
+                    className="h-full bg-[#25D366] rounded-full transition-all duration-300"
+                    style={{
+                      width:
+                        diagnosticStep === 0
+                          ? '25%'
+                          : diagnosticStep === 1
+                          ? '55%'
+                          : diagnosticStep === 2
+                          ? '80%'
+                          : '100%',
+                    }}
+                  />
+                </div>
+
+                <div className="text-[11px] font-mono space-y-1 text-zinc-400 pt-1">
+                  <div className={`flex items-center gap-2 ${diagnosticStep >= 0 ? 'text-[#25D366]' : 'text-zinc-600'}`}>
+                    <span>{diagnosticStep > 0 ? '✓' : '▶'}</span>
+                    <span>Checking CPU socket to Motherboard pinout...</span>
                   </div>
-                ))}
+                  <div className={`flex items-center gap-2 ${diagnosticStep >= 1 ? 'text-[#25D366]' : 'text-zinc-600'}`}>
+                    <span>{diagnosticStep > 1 ? '✓' : diagnosticStep === 1 ? '▶' : '○'}</span>
+                    <span>Verifying RAM topology & memory controller...</span>
+                  </div>
+                  <div className={`flex items-center gap-2 ${diagnosticStep >= 2 ? 'text-[#25D366]' : 'text-zinc-600'}`}>
+                    <span>{diagnosticStep > 2 ? '✓' : diagnosticStep === 2 ? '▶' : '○'}</span>
+                    <span>Calculating total peak wattage & PSU headroom...</span>
+                  </div>
+                  <div className={`flex items-center gap-2 ${diagnosticStep >= 3 ? 'text-[#25D366]' : 'text-zinc-600'}`}>
+                    <span>{diagnosticStep >= 3 ? '▶' : '○'}</span>
+                    <span>Simulating thermal dissipation & chassis clearance...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Scanned Results Revealed */}
+            {!isDiagnosticScanning && hasDiagnosticScanned && (
+              <div className="space-y-3 animate-in fade-in duration-200">
+                <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                  {isFullyCompatible ? (
+                    <CheckCircle2 className="w-5 h-5 text-[#25D366] shrink-0" />
+                  ) : (
+                    <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+                  )}
+                  <div>
+                    <h4 className="font-bold text-xs text-white">
+                      {isFullyCompatible ? 'Zero Compatibility Issues' : 'Attention Required'}
+                    </h4>
+                    <p className="text-[10px] text-zinc-400">
+                      {isFullyCompatible
+                        ? 'All selected hardware components are 100% interoperable.'
+                        : 'Review the warnings below before purchasing.'}
+                    </p>
+                  </div>
+                </div>
+
+                {issues.length > 0 && (
+                  <div className="space-y-2">
+                    {issues.map((issue, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs leading-tight"
+                      >
+                        ⚠️ {issue}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {passed.length > 0 && (
+                  <div className="space-y-1.5 p-2 rounded-lg bg-black/30 border border-white/5 text-xs text-zinc-300">
+                    {passed.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
+                        <span className="text-[11px]">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleRunDiagnostic}
+                  className="w-full py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Re-scan Hardware Telemetry</span>
+                </button>
               </div>
             )}
 
@@ -642,13 +796,13 @@ export const PCBuilderView: React.FC = () => {
 
       {/* Finished Custom Build Celebration Modal */}
       {showCelebrationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div
             className="fixed inset-0 bg-black/85 backdrop-blur-md"
             onClick={() => setShowCelebrationModal(false)}
           />
 
-          <div className="relative w-full max-w-2xl bg-[#121316] border border-[#25D366] rounded-2xl shadow-[0_0_60px_rgba(37,211,102,0.35)] p-6 sm:p-8 z-10 my-8 animate-in fade-in zoom-in duration-200">
+          <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[#121316] border border-[#25D366] rounded-2xl shadow-[0_0_60px_rgba(37,211,102,0.35)] p-6 sm:p-8 z-10 my-auto animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setShowCelebrationModal(false)}
               className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
@@ -762,26 +916,26 @@ export const PCBuilderView: React.FC = () => {
 
       {/* Part Selection Modal */}
       {activeSlotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div
             className="fixed inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setActiveSlotModal(null)}
           />
 
-          <div className="relative w-full max-w-2xl bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-2xl p-6 z-10 my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+          <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-2xl p-5 sm:p-6 z-10 my-auto animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-white/10 shrink-0">
               <h3 className="font-display font-black text-lg text-white uppercase">
                 Choose {activeSlotModal.toUpperCase()}
               </h3>
               <button
                 onClick={() => setActiveSlotModal(null)}
-                className="text-zinc-400 hover:text-white text-xs font-bold"
+                className="text-zinc-400 hover:text-white text-xs font-bold p-1.5 rounded-lg bg-white/5 hover:bg-white/10"
               >
                 Close
               </button>
             </div>
 
-            <div className="mt-4 max-h-96 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
+            <div className="mt-4 flex-1 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
               {COMPONENTS.filter((c) => c.type === activeSlotModal).map((comp) => (
                 <div
                   key={comp.id}

@@ -95,7 +95,7 @@ export const BrowseCategoriesDrawer: React.FC<BrowseCategoriesDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
@@ -103,9 +103,9 @@ export const BrowseCategoriesDrawer: React.FC<BrowseCategoriesDrawerProps> = ({
       />
 
       {/* Modal / Flyout Box */}
-      <div className="relative w-full max-w-5xl bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-5xl max-h-[90vh] flex flex-col bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden z-10 my-auto animate-in fade-in zoom-in-95 duration-200">
         {/* Top Header Bar */}
-        <div className="p-4 sm:p-5 border-b border-white/10 bg-[#0e1014] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 border-b border-white/10 bg-[#0e1014] flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
               <Sparkles className="w-5 h-5" />
@@ -143,7 +143,7 @@ export const BrowseCategoriesDrawer: React.FC<BrowseCategoriesDrawerProps> = ({
         </div>
 
         {/* Categories Grid */}
-        <div className="p-5 sm:p-6 max-h-[68vh] overflow-y-auto custom-scrollbar">
+        <div className="p-5 sm:p-6 flex-1 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {filteredCategories.map((category) => {
               const IconComponent = ICON_MAP[category.iconName] || Cpu;

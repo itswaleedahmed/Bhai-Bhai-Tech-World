@@ -33,7 +33,7 @@ export const AuthModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2 }}
-          className="bg-[#121316] border border-white/10 rounded-2xl w-full max-w-md p-6 sm:p-7 shadow-2xl relative overflow-hidden"
+          className="bg-[#121316] border border-white/10 rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto p-6 sm:p-7 shadow-2xl relative"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Top glow accent */}

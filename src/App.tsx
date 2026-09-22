@@ -11,11 +11,9 @@ import { AnnouncementTicker } from './components/AnnouncementTicker';
 import { Header } from './components/Header';
 import { HeroBanner } from './components/HeroBanner';
 import { TrustGuarantees } from './components/TrustGuarantees';
-import { CategoryPillBar } from './components/CategoryPillBar';
-import { FeaturedPCBuilds } from './components/FeaturedPCBuilds';
-import { BestSellingCards } from './components/BestSellingCards';
 import { ShopByCategoryGrid } from './components/ShopByCategoryGrid';
-import { LatestProducts } from './components/LatestProducts';
+import { BestSellingCards } from './components/BestSellingCards';
+import { PCBuilderSpotlight } from './components/PCBuilderSpotlight';
 import { ShopCatalogView } from './components/ShopCatalogView';
 import { PCBuilderView } from './components/PCBuilderView';
 import { FPSEstimatorView } from './components/FPSEstimatorView';
@@ -34,6 +32,7 @@ import { VideoInspectionModal } from './components/VideoInspectionModal';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { AuthModal } from './components/AuthModal';
 import { ToastNotificationView } from './components/ToastNotification';
+import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { scrollToTop } from './utils/scroll';
 
 const AdminRouteGuard: React.FC = () => {
@@ -133,6 +132,9 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-zinc-100 flex flex-col font-sans selection:bg-[#25D366] selection:text-black">
+      {/* Scroll Progress & Dynamic Indicator */}
+      <ScrollProgressBar />
+
       {/* Top Ticker */}
       <AnnouncementTicker />
 
@@ -149,11 +151,9 @@ const AppContent: React.FC = () => {
           >
             <HeroBanner />
             <TrustGuarantees />
-            <CategoryPillBar />
-            <FeaturedPCBuilds />
-            <BestSellingCards />
             <ShopByCategoryGrid />
-            <LatestProducts />
+            <BestSellingCards />
+            <PCBuilderSpotlight />
           </motion.div>
         )}
 

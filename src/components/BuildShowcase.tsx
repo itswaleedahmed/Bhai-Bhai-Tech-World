@@ -436,13 +436,13 @@ export const BuildShowcase: React.FC<BuildShowcaseProps> = ({
 
       {/* Inspect Rig Specs Modal */}
       {activeInspectBuild && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div
             className="fixed inset-0 bg-black/85 backdrop-blur-md"
             onClick={() => setActiveInspectBuild(null)}
           />
 
-          <div className="relative w-full max-w-2xl bg-[#121316] border border-white/15 rounded-2xl shadow-2xl p-6 z-10 my-8 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95">
+          <div className="relative w-full max-w-2xl bg-[#121316] border border-white/15 rounded-2xl shadow-2xl p-6 z-10 my-auto max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95">
             <button
               onClick={() => setActiveInspectBuild(null)}
               className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer"
@@ -535,13 +535,13 @@ export const BuildShowcase: React.FC<BuildShowcaseProps> = ({
 
       {/* Submit Your Rig Dialog */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
           <div
             className="fixed inset-0 bg-black/85 backdrop-blur-md"
             onClick={() => setIsSubmitModalOpen(false)}
           />
 
-          <div className="relative w-full max-w-lg bg-[#121316] border border-white/15 rounded-2xl shadow-2xl p-6 z-10 my-8 animate-in fade-in zoom-in-95">
+          <div className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto bg-[#121316] border border-white/15 rounded-2xl shadow-2xl p-6 z-10 my-auto animate-in fade-in zoom-in-95">
             <button
               onClick={() => setIsSubmitModalOpen(false)}
               className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer"

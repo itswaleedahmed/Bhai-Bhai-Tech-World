@@ -43,12 +43,12 @@ export const VideoInspectionModal: React.FC = () => {
   const whatsAppUrl = `https://wa.me/923216886475?text=${waText}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       <div className="fixed inset-0 bg-black/85 backdrop-blur-md" onClick={closeVideoInspection} />
 
-      <div className="relative w-full max-w-xl bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 my-8 animate-in fade-in zoom-in duration-200">
+      <div className="relative w-full max-w-xl max-h-[92vh] flex flex-col bg-[#121316] border border-[#25D366]/40 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 my-auto animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-[#181a20] via-[#121316] to-[#181a20] border-b border-white/10 flex items-center justify-between">
+        <div className="p-5 sm:p-6 bg-gradient-to-r from-[#181a20] via-[#121316] to-[#181a20] border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 border border-[#25D366]/50 flex items-center justify-center text-[#25D366] shrink-0">
               <Video className="w-5 h-5 animate-pulse" />
@@ -73,7 +73,7 @@ export const VideoInspectionModal: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6 space-y-5">
+        <div className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
           {/* Target Product Strip */}
           <div className="flex items-center gap-3.5 p-3 rounded-xl bg-white/[0.03] border border-white/10">
             <img

@@ -75,9 +75,9 @@ export const QuickViewModal: React.FC = () => {
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl bg-[#121316] border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 my-auto animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] bg-[#121316] border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden z-10 my-auto flex flex-col animate-in zoom-in-95 duration-200">
         {/* Top bar header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-[#16171B]/80">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-[#16171B]/80 shrink-0">
           <div className="flex items-center gap-2">
             <span className="p-1 rounded bg-[#25D366]/10 text-[#25D366]">
               <Eye className="w-4 h-4" />

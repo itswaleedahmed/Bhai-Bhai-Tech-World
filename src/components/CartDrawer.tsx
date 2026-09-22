@@ -34,13 +34,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
         onClick={() => setIsCartOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-[#121316] border-l border-white/10 shadow-2xl flex flex-col justify-between">
           {/* Header */}
-          <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#0e1014]">
+          <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between bg-[#0e1014]">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#25D366]" />
-              <h3 className="font-display font-black text-lg text-white uppercase tracking-wider">
+              <h3 className="font-display font-black text-base sm:text-lg text-white uppercase tracking-wider">
                 Shopping Cart
               </h3>
               <span className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full">
@@ -50,22 +50,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
 
             <button
               onClick={() => setIsCartOpen(false)}
-              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white"
+              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Cart Items List */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-white/5">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 divide-y divide-white/5 custom-scrollbar">
             {cart.length > 0 ? (
               cart.map(({ product, quantity }) => (
                 <div key={product.id} className="pt-4 first:pt-0 flex gap-3.5 items-center">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-16 h-16 object-cover rounded-lg bg-black/50 border border-white/10 shrink-0"
-                  />
+                  <div className="w-16 h-16 rounded-lg bg-black/50 border border-white/10 p-1 flex items-center justify-center shrink-0">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-bold text-white truncate">{product.name}</h4>

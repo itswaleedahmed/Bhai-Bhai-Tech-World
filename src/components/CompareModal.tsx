@@ -29,7 +29,7 @@ export const CompareModal: React.FC = () => {
     : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/85 backdrop-blur-md transition-opacity"

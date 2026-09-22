@@ -79,6 +79,27 @@
   scrollbar-width: none;
 }
 
+/* Continuous Headline Marquee Animation */
+@keyframes headlineScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-headline-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: headlineScroll 40s linear infinite;
+}
+
+.animate-headline-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Custom dark scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
